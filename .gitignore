@@ -1,0 +1,7 @@
+# Nunca subir datos: el reporte se genera en GitHub Actions y se publica cifrado.
+dist/
+_local/
+*.plain.json
+config.local.json
+node_modules/
+.env

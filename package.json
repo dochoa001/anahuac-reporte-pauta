@@ -1,0 +1,10 @@
+{
+  "name": "reporte-pauta",
+  "private": true,
+  "type": "module",
+  "description": "Reporte vivo: leads de los proveedores de pauta vs contactos y negocios en HubSpot.",
+  "scripts": {
+    "motor": "node src/motor.mjs"
+  },
+  "engines": { "node": ">=20" }
+}

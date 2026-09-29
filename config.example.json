@@ -1,0 +1,30 @@
+{
+  "cliente": "Nombre del cliente",
+  "titulo": "Leads de pauta vs HubSpot",
+  "portalId": "0000000",
+  "zonaHoraria": "America/Mexico_City",
+  "desde": "2026-06-01",
+  "salCifrado": "cliente-reporte-pauta-v1",
+  "reglas": { "ventanaNegocioHoras": 48, "toleranciaPreviaMin": 10, "toleranciaNuevoMin": 5, "desfaseMin": 60 },
+  "propiedades": {
+    "programaNegocio": "n1_0_posgrado_de_interes__negocio_",
+    "programaContacto": "posgrados_en_sitio_mexico_posgrados"
+  },
+  "proveedores": [
+    {
+      "id": "proveedor-a",
+      "nombre": "Proveedor A",
+      "fuente": { "tipo": "sheet", "id": "ID_DEL_GOOGLE_SHEET", "excluirPestanas": ["Notas"] },
+      "zonaSinOffset": "-06:00",
+      "programaPorPestana": { "DII": "Doctorado en Ingeniería Industrial" },
+      "programaPorFormulario": { "1234567890": "Maestría en Logística" }
+    },
+    {
+      "id": "proveedor-b",
+      "nombre": "Proveedor B",
+      "fuente": null,
+      "nota": "Cuando el proveedor comparta su base de leads, aparece aquí."
+    }
+  ],
+  "aliasProgramas": { "MBA ejecutivo": "Executive MBA" }
+}

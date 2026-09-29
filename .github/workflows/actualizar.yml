@@ -1,0 +1,84 @@
+name: Actualizar reporte
+
+on:
+  schedule:
+    - cron: '17 * * * *'   # cada hora (UTC). GitHub puede retrasarlo unos minutos.
+  workflow_dispatch:        # botón "Run workflow" y el botón "Actualizar" de la página (vía Apps Script)
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: write
+
+concurrency:
+  group: reporte
+  cancel-in-progress: false
+
+jobs:
+  generar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generar reporte cifrado
+        env:
+          REPORT_CONFIG: ${{ vars.REPORT_CONFIG }}
+          DISPATCH_URL: ${{ vars.DISPATCH_URL }}
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+          GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON }}
+          REPORT_PASSWORD: ${{ secrets.REPORT_PASSWORD }}
+          DISPATCH_KEY: ${{ secrets.DISPATCH_KEY }}
+        run: |
+          mkdir -p dist
+          faltan=""
+          [ -n "$REPORT_CONFIG" ]   || faltan="$faltan REPORT_CONFIG(variable)"
+          [ -n "$HUBSPOT_TOKEN" ]   || faltan="$faltan HUBSPOT_TOKEN(secreto)"
+          [ -n "$REPORT_PASSWORD" ] || faltan="$faltan REPORT_PASSWORD(secreto)"
+          if [ -n "$faltan" ]; then
+            echo "::warning::Se publica solo la página, sin datos. Falta configurar:$faltan"
+          else
+            node src/motor.mjs --out dist/data.enc.json
+          fi
+
+      - name: Armar sitio
+        run: |
+          cp public/* dist/
+          touch dist/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publicar:
+    needs: generar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+  mantener-activo:
+    # En repos públicos GitHub apaga los workflows programados tras 60 días sin actividad.
+    # Una vez al día se vuelve a habilitar este workflow por API para que el reloj no llegue a cero.
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reactivar el workflow programado
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "$(date -u +%H)" = "15" ]; then
+            curl -fsS -X PUT -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/actualizar.yml/enable"
+            echo "Workflow reactivado."
+          fi
