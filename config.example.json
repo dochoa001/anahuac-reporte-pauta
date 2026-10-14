@@ -22,6 +22,12 @@
     {
       "id": "proveedor-b",
       "nombre": "Proveedor B",
+      "fuente": { "tipo": "meta", "paginas": ["ID_DE_PAGINA"], "cuentas": ["act_ID_DE_CUENTA"], "formularios": { "incluir": "^PROVB_" } },
+      "respaldo": { "tipo": "sheet", "id": "ID_DEL_GOOGLE_SHEET_DE_B" }
+    },
+    {
+      "id": "proveedor-c",
+      "nombre": "Proveedor C",
       "fuente": null,
       "nota": "Cuando el proveedor comparta su base de leads, aparece aquí."
     }

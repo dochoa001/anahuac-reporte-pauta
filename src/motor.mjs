@@ -9,7 +9,13 @@
 //   HUBSPOT_TOKEN      clave de solo lectura de HubSpot (en GitHub Actions)
 //   HUBSPOT_BASE_URL   opcional; p. ej. el proxy local de B&O (entonces no hace falta token)
 //   GOOGLE_SA_JSON     JSON de la cuenta de servicio de Google (para leer los Sheets)
+//   META_TOKENS        JSON {"usuario":"…","paginas":{"<idPagina>":"…"}} para las fuentes tipo "meta"
+//   META_BASE_URL      opcional; el mini-proxy local de B&O para Meta (entonces no hace falta META_TOKENS)
+//   (Las fuentes tipo "hubspot" leen los leads de Meta que HubSpot ya sincroniza; usan el mismo HUBSPOT_TOKEN.)
 //   REPORT_PASSWORD    contraseña con la que se cifra el reporte
+// Opciones:
+//   --plain archivo.json   además escribe una copia sin cifrar (solo local; contiene datos personales)
+//   --solo-fuentes         lee las bases y escribe el --plain con los leads crudos, sin consultar HubSpot
 //   DISPATCH_URL / DISPATCH_KEY  opcionales, para el botón "Actualizar ahora"
 import fs from 'node:fs';
 import path from 'node:path';
@@ -48,9 +54,11 @@ async function main() {
   const contrasena = process.env.REPORT_PASSWORD || '';
   if (!args.plain && !contrasena) throw new Error('Falta REPORT_PASSWORD.');
   const credencialesGoogle = process.env.GOOGLE_SA_JSON ? JSON.parse(process.env.GOOGLE_SA_JSON) : null;
+  const tokensMeta = process.env.META_TOKENS ? JSON.parse(process.env.META_TOKENS) : null;
   const hs = new HubSpot({ baseUrl: process.env.HUBSPOT_BASE_URL || 'https://api.hubapi.com', token: process.env.HUBSPOT_TOKEN || '' });
-  if (!process.env.HUBSPOT_TOKEN && !process.env.HUBSPOT_BASE_URL) throw new Error('Falta HUBSPOT_TOKEN.');
+  if (!args['solo-fuentes'] && !process.env.HUBSPOT_TOKEN && !process.env.HUBSPOT_BASE_URL) throw new Error('Falta HUBSPOT_TOKEN.');
   const desde = cfg.desde ? Date.parse(cfg.desde + 'T00:00:00-06:00') : -Infinity;
+  const opcionesFuente = { credencialesGoogle, tokensMeta, desde, dirBase: cfg._dirBase, hs, proveedores: cfg.proveedores || [] };
 
   // 1) Bases de los proveedores
   const proveedores = []; let leads = [];
@@ -59,7 +67,17 @@ async function main() {
     proveedores.push({ ...prov, _info: info });
     if (!prov.fuente) { info.detalle = prov.nota || 'Aún no hay una base conectada para este proveedor.'; continue; }
     try {
-      const r = await leerFuente(prov.fuente, { credencialesGoogle, dirBase: cfg._dirBase });
+      let fuenteUsada = prov.fuente, r;
+      try {
+        r = await leerFuente(prov.fuente, { ...opcionesFuente, idProveedor: prov.id });
+      } catch (e) {
+        // Si la fuente principal falla (p. ej. Meta sin acceso) y hay respaldo, se usa el respaldo.
+        if (!prov.respaldo) throw e;
+        log(`${prov.nombre}: la fuente ${prov.fuente.tipo} falló (${e.message.slice(0, 160)}); se usa el respaldo ${prov.respaldo.tipo}.`);
+        fuenteUsada = prov.respaldo;
+        r = await leerFuente(prov.respaldo, opcionesFuente);
+        info.detalle = `Fuente ${prov.fuente.tipo} sin acceso; datos del respaldo (${prov.respaldo.tipo}).`;
+      }
       let propios = [];
       for (const tabla of r.tablas) {
         const { leads: ls, descartadas } = tablaALeads(tabla.filas, { pestana: tabla.pestana, zonaSinOffset: prov.zonaSinOffset || '-06:00' });
@@ -69,13 +87,23 @@ async function main() {
       propios = deduplicar(propios).filter(l => l.t >= desde);
       propios.forEach(l => { l.p = p; });
       info.estado = 'ok'; info.leads = propios.length;
-      info.fuente = { tipo: prov.fuente.tipo, titulo: r.titulo || '', pestanas: r.tablas.map(t => t.pestana) };
+      info.fuente = { tipo: fuenteUsada.tipo, titulo: r.titulo || '', pestanas: r.tablas.map(t => t.pestana) };
+      if (r.notas?.length) info.detalle = [info.detalle, ...r.notas].filter(Boolean).join(' · ').slice(0, 300);
       leads.push(...propios);
-      log(`${prov.nombre}: ${propios.length} leads de ${r.tablas.length} pestaña(s)/archivo(s); ${info.descartadas} filas sin correo o fecha.`);
+      log(`${prov.nombre}: ${propios.length} leads de ${r.tablas.length} pestaña(s)/archivo(s)/formulario(s); ${info.descartadas} filas sin correo o fecha.`);
+      if (fuenteUsada.tipo === 'meta') for (const t of r.tablas) log(`  ${t.pestana}: ${t.filas.length - 1} leads`);
     } catch (e) {
       info.estado = 'error'; info.detalle = e.message.slice(0, 300);
       log(`${prov.nombre}: ERROR ${info.detalle}`);
     }
+  }
+
+  if (args['solo-fuentes']) {
+    if (!args.plain) throw new Error('--solo-fuentes necesita --plain archivo.json para escribir los leads.');
+    fs.mkdirSync(path.dirname(path.resolve(args.plain)), { recursive: true });
+    fs.writeFileSync(args.plain, JSON.stringify({ generadoEn: new Date().toISOString(), proveedores: proveedores.map(p => p._info), leads }, null, 1));
+    log(`Solo fuentes: ${leads.length} leads escritos SIN cifrar en ${args.plain} (solo uso local, contiene datos personales).`);
+    return;
   }
 
   // 2) Catálogos de HubSpot

@@ -10,8 +10,8 @@ Página que muestra, por proveedor de pauta, si cada lead de su base **ya es con
 
 | Pieza | Qué hace | Dónde |
 |---|---|---|
-| Bases de proveedores | Un Google Sheet vivo por proveedor (el export de Meta) | Google Drive |
-| Motor (`src/`) | Lee los Sheets y busca cada correo en HubSpot (contacto, negocios asociados, etapa y propietario). Después aplica las reglas y **cifra** el resultado | GitHub Actions, cada hora |
+| Bases de proveedores | Leads leídos **directo de Meta** (Graph API, solo lectura) o, mientras no haya acceso, un Google Sheet vivo por proveedor | Meta · Google Drive |
+| Motor (`src/`) | Lee las bases y busca cada correo en HubSpot (contacto, negocios asociados, etapa y propietario). Después aplica las reglas y **cifra** el resultado | GitHub Actions, cada hora |
 | Página (`public/index.html`) | Pide la contraseña, descifra el reporte en el navegador y lo dibuja | GitHub Pages |
 
 GitHub Pages es **público**, así que el reporte se publica cifrado (AES-256-GCM, con una llave derivada de la contraseña mediante PBKDF2). Sin la contraseña, `data.enc.json` no se puede leer. En el repositorio no hay datos ni claves: la configuración y los secretos viven en *Settings → Secrets and variables → Actions*.
@@ -59,6 +59,21 @@ Después se corre el workflow: *Actions → Actualizar reporte → Run workflow*
 
 ## Agregar un proveedor
 
+**Directo de Meta (preferido).** La agencia da acceso a su cuenta publicitaria y el dueño de la página de Facebook asigna la página con permiso de *Anuncios*. En `REPORT_CONFIG`:
+
+```json
+"fuente": { "tipo": "meta", "paginas": ["<id de página>"], "cuentas": ["act_<id>"], "formularios": { "incluir": "NODS|MTIIA" } },
+"respaldo": { "tipo": "sheet", "id": "<ID del Sheet>" }
+```
+
+- Con token de **página** lee por formulario (`/{page}/leadgen_forms` → `/{form}/leads`), que es la ruta documentada por Meta e incluye leads orgánicos.
+- Sin página pero con la cuenta publicitaria, lee por anuncio (`/act_{id}/ads` → `/{ad}/leads`) con el token de usuario.
+- `formularios.incluir` / `excluir` son expresiones regulares sobre el nombre del formulario. Solo se leen leads desde `desde`.
+- Si Meta falla (falta de acceso, token vencido), se usa el `respaldo` y el proveedor sale con una nota en la página.
+- Los tokens van en el secreto **`META_TOKENS`**: `{"usuario":"…","paginas":{"<id de página>":"…"}}`. El de usuario dura ~60 días; el de página no caduca.
+
+**Por Google Sheet.**
+
 1. El proveedor comparte su Google Sheet con la cuenta de servicio.
 2. En `REPORT_CONFIG`, a su entrada se le pone `"fuente": { "tipo": "sheet", "id": "<ID del Sheet>" }`.
 
@@ -72,12 +87,13 @@ Las fechas sin zona horaria se leen como `zonaSinOffset` (por defecto `-06:00`, 
 ## Correr en local (con el proxy de B&O)
 
 ```powershell
-$env:HUBSPOT_BASE_URL = 'http://127.0.0.1:8787/AnahuacPosgrados'   # el proxy pone la clave
+$env:HUBSPOT_BASE_URL = 'http://127.0.0.1:8787/AnahuacPosgrados'   # el proxy de HubSpot pone la clave
+$env:META_BASE_URL    = 'http://127.0.0.1:8788/AnahuacPosgrados'   # el mini-proxy de Meta pone el token
 $env:REPORT_PASSWORD  = 'contraseña-de-prueba-local'
 node src/motor.mjs --config config.local.json --out _local/dist/data.enc.json
 ```
 
-`--plain archivo.json` escribe además una copia **sin cifrar**, solo para revisión local. Contiene datos personales y nunca se sube. `.gitignore` ya excluye `_local/`, `dist/` y `*.plain.json`.
+`--plain archivo.json` escribe además una copia **sin cifrar**, solo para revisión local. Contiene datos personales y nunca se sube. `.gitignore` ya excluye `_local/`, `dist/` y `*.plain.json`. `--solo-fuentes --plain archivo.json` lee las bases y escribe los leads crudos sin consultar HubSpot (para comparar fuentes).
 
 ## Límites conocidos
 
@@ -85,3 +101,17 @@ node src/motor.mjs --config config.local.json --out _local/dist/data.enc.json
 - **Inactividad:** en repos públicos, GitHub apaga los workflows programados tras 60 días sin actividad. El job `mantener-activo` lo reactiva una vez al día; aun así, si llega el correo de aviso de GitHub, basta con volver a correr el workflow.
 - **Rotar la contraseña:** se cambia `REPORT_PASSWORD` y se corre el workflow. Quien tenga la página abierta tendrá que escribir la nueva.
 - **Búsqueda por correo secundario:** se hace hasta con 200 correos no encontrados por corrida (`maxBusquedasSecundarias`).
+
+## Fuente `"tipo": "hubspot"` (leads de Meta desde HubSpot)
+
+HubSpot ya trae los leads de Meta con su *Sincronización de leads*: cada lead entra como envío de un formulario `FACEBOOK_LEAD_AD` con el nombre del formulario de Meta. Esta fuente los lee de ahí, con el mismo `HUBSPOT_TOKEN` (solo lectura de contactos), sin token ni acceso a las páginas de Meta.
+
+```json
+{ "id": "nods", "nombre": "Grupo Nods",
+  "fuente": { "tipo": "hubspot", "formularios": { "ids": ["<guid del formulario en HubSpot>"], "incluir": "NODS|MTIIA" } },
+  "respaldo": { "tipo": "sheet", "id": "<id del Sheet>" } }
+```
+
+- Cada formulario se asigna a un solo proveedor: primero por `ids`, luego por `incluir` (en el orden de la configuración).
+- Un proveedor con `"resto": true` se queda con los formularios de Meta que nadie reclamó.
+- Límite: si un lead no llega de Meta a HubSpot, esta fuente no lo ve.
