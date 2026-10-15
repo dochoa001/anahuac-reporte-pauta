@@ -34,6 +34,7 @@ jobs:
           DISPATCH_URL: ${{ vars.DISPATCH_URL }}
           HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
           GOOGLE_SA_JSON: ${{ secrets.GOOGLE_SA_JSON }}
+          META_TOKENS: ${{ secrets.META_TOKENS }}
           REPORT_PASSWORD: ${{ secrets.REPORT_PASSWORD }}
           DISPATCH_KEY: ${{ secrets.DISPATCH_KEY }}
         run: |
