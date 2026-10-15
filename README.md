@@ -115,3 +115,18 @@ HubSpot ya trae los leads de Meta con su *Sincronización de leads*: cada lead e
 - Cada formulario se asigna a un solo proveedor: primero por `ids`, luego por `incluir` (en el orden de la configuración).
 - Un proveedor con `"resto": true` se queda con los formularios de Meta que nadie reclamó.
 - Límite: si un lead no llega de Meta a HubSpot, esta fuente no lo ve.
+
+## Meta → HubSpot (conciliación)
+
+Responde una sola pregunta para la clienta: **¿cada lead que entró por un formulario de Meta llegó a HubSpot?** Sale como tarjeta en la portada y con detalle en `#/meta` (por página, semana a semana, por formulario y la lista de los que no llegaron, con descarga en CSV).
+
+| Pieza | Qué hace |
+|---|---|
+| `conciliacionMeta` (en `REPORT_CONFIG`) | Páginas de Facebook a comparar (`id` y `nombre`), días de ventana (`dias`, máx. 89; Meta guarda ~90) y margen para los leads recién llegados (`margenMin`) |
+| `leerPaginasMeta` (`src/fuentes.mjs`) | Con el token de cada página: `leadgen_forms` y luego `/{form}/leads` con filtro por fecha. Solo pide los formularios con leads recientes o creados en la ventana. Solo GET |
+| `conciliar` (`src/conciliacion.mjs`) | Cruza cada lead de Meta con los envíos `FACEBOOK_LEAD_AD` de HubSpot (el mismo escaneo de la fuente `hubspot`): mismo formulario + mismo correo (≤ 24 h) y, si no, mismo formulario + misma hora (≤ 5 min). Uno a uno |
+| Secreto `META_TOKENS` | `{"paginas":{"<idPagina>":"<token de página>"}}`. Una página sin token sale como *Acceso pendiente* y no tumba la corrida |
+
+**Tokens.** Se cargan con `_local/cargar-tokens-meta.ps1` (fuera del repo): pide el token de usuario *ampliado* (Depurador de tokens → *Ampliar token de acceso*), saca los tokens de página (no caducan), revisa que lean formularios y los guarda con `gh secret set META_TOKENS` sin mostrarlos. Hay que volver a correrlo si se agrega una página, si cambia la contraseña de Facebook de quien los generó o si esa persona pierde su rol en la página.
+
+**Logs.** La corrida solo escribe conteos por página (leads en Meta, en HubSpot, faltantes); nunca correos ni nombres.

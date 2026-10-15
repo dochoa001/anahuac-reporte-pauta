@@ -12,7 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { pedir } from './http.mjs';
-import { parseCSV, parseXMLSpreadsheet, normalizar, RE_EMAIL, enParalelo, trozos } from './util.mjs';
+import { parseCSV, parseXMLSpreadsheet, normalizar, RE_EMAIL, enParalelo, trozos, parseFecha, limpiarEmail } from './util.mjs';
 
 let tokenGoogle = null;
 
@@ -95,7 +95,7 @@ function camposLead(fieldData) {
     if (k && v && !(k in o)) o[k] = v;
   }
   const email = o.email || Object.entries(o).find(([k, v]) => /email|correo|mail/.test(k) && RE_EMAIL.test(v))?.[1] || '';
-  const nombre = o['full name'] || [o['first name'] || o.nombre || o.nombres, o['last name'] || o.apellido || o.apellidos].filter(Boolean).join(' ');
+  const nombre = o['full name'] || [o['first name'] || o.firstname || o.nombre || o.nombres, o['last name'] || o.lastname || o.apellido || o.apellidos].filter(Boolean).join(' ');
   const programa = Object.entries(o).find(([k]) => /programa|posgrado|maestria|doctorado|especialidad|carrera|interes/.test(k)
     && !/email|correo|mail|telefono|phone|nombre|name|apellido/.test(k))?.[1] || '';
   return { email, nombre, programa };
@@ -176,6 +176,41 @@ async function leerMeta(fuente, { tokens, desde } = {}) {
   return { titulo, tablas, notas, ruta };
 }
 
+// Leads de varias páginas de Meta, cada una con su token de página, para la conciliación Meta ↔ HubSpot.
+// Una página sin token sale como "sin_acceso" (no tumba la corrida). Solo se piden los formularios que
+// tienen leads recientes (leads_count > 0) o que se crearon dentro de la ventana; Meta guarda ~90 días.
+// Privacidad: no escribe en consola; correo y nombre solo viajan en memoria y en el reporte cifrado.
+export async function leerPaginasMeta({ tokens, paginas = [], desde, version } = {}) {
+  const m = clienteMeta({ tokens, version });
+  const filtro = JSON.stringify([{ field: 'time_created', operator: 'GREATER_THAN', value: Math.floor(desde / 1000) - 1 }]);
+  const salida = [];
+  for (const pg of paginas) {
+    const id = String(pg.id ?? pg);
+    const r = { id, nombre: pg.nombre || '', estado: 'ok', detalle: '', formularios: [], leads: [] };
+    salida.push(r);
+    const tipo = `pagina-${id}`;
+    if (!m.tieneToken(tipo)) { r.estado = 'sin_acceso'; r.detalle = 'Acceso pendiente a la página.'; continue; }
+    try {
+      if (!r.nombre) r.nombre = (await m.get(id, { fields: 'name' }, tipo, 'página')).name || id;
+      const forms = await m.todo(`${id}/leadgen_forms`, { fields: 'id,name,leads_count,created_time' }, tipo, 'leadgen_forms');
+      r.formularios = forms.map(f => ({ id: String(f.id), n: f.name || '' }));
+      const conLeads = forms.filter(f => !(Number(f.leads_count) === 0) || parseFecha(f.created_time) >= desde);
+      await enParalelo(conLeads, 3, async f => {
+        const ls = await m.todo(`${f.id}/leads`, { fields: 'id,created_time,field_data', filtering: filtro }, tipo, 'leads por formulario');
+        for (const l of ls) {
+          const t = parseFecha(l.created_time);
+          if (!(t >= desde)) continue;
+          const c = camposLead(l.field_data);
+          r.leads.push({ id: String(l.id || ''), t, formId: String(f.id), formNombre: f.name || '', email: limpiarEmail(c.email), nombre: c.nombre });
+        }
+      });
+    } catch (e) {
+      r.estado = 'error'; r.detalle = e.message.replace(/EAA[0-9A-Za-z]+/g, '[token]').slice(0, 200);
+    }
+  }
+  return salida;
+}
+
 // ---------------------------------------------------------------------------------------------
 // HubSpot como fuente de los leads de Meta (tipo "hubspot").
 // HubSpot ya está conectado a las páginas por la Sincronización de leads: cada lead de Meta entra
@@ -211,7 +246,7 @@ async function buscarContactosConConversion(hs, desde, hasta) {
   return [...ids];
 }
 
-async function escanearLeadsMeta(hs, desde) {
+export async function escanearLeadsMeta(hs, desde) {
   const clave = String(desde);
   if (escaneos.has(clave)) return escaneos.get(clave);
   const promesa = (async () => {
@@ -242,7 +277,7 @@ async function escanearLeadsMeta(hs, desde) {
 
 // A qué proveedor pertenece cada formulario: primero por ID (gana siempre), luego por la expresión
 // sobre el nombre, en el orden de la configuración; lo que nadie reclama va al proveedor "resto".
-function asignadorDeFormularios(proveedores) {
+export function asignadorDeFormularios(proveedores) {
   const conHubspot = proveedores.filter(p => p.fuente?.tipo === 'hubspot');
   const porId = new Map();
   for (const p of conHubspot) for (const id of p.fuente.formularios?.ids || []) if (!porId.has(String(id))) porId.set(String(id), p.id);

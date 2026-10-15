@@ -32,5 +32,13 @@
       "nota": "Cuando el proveedor comparta su base de leads, aparece aquí."
     }
   ],
-  "aliasProgramas": { "MBA ejecutivo": "Executive MBA" }
+  "aliasProgramas": { "MBA ejecutivo": "Executive MBA" },
+  "conciliacionMeta": {
+    "dias": 88,
+    "margenMin": 30,
+    "paginas": [
+      { "id": "ID_DE_PAGINA_1", "nombre": "Nombre corto de la página" },
+      { "id": "ID_DE_PAGINA_2", "nombre": "Página con acceso pendiente" }
+    ]
+  }
 }

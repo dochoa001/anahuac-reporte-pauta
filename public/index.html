@@ -170,6 +170,19 @@ details.tbl summary{cursor:pointer;font-size:13.5px;font-weight:500;color:var(--
 .how dd{margin:0}
 @media (max-width:560px){.how dl{grid-template-columns:1fr}.how dd{margin-bottom:6px}}
 .flag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);margin-top:3px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.pill i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.cmp{box-shadow:var(--shadow)}
+.cmp-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px}
+.cmp-head .go{font-size:13.5px;color:var(--accent-ink);font-weight:500;white-space:nowrap;text-decoration:none}
+.cmp-head .go:hover{text-decoration:underline}
+.verdict{display:flex;gap:12px;align-items:center;border-radius:12px;padding:12px 14px;background:var(--surface-2);font-size:15px;font-weight:500}
+.verdict .ico{width:26px;height:26px;border-radius:50%;display:inline-grid;place-items:center;font-weight:700;flex:none;font-size:14px}
+.verdict.ok .ico{background:var(--st-good);color:#fff}
+.verdict.warn .ico{background:var(--st-serious);color:#1b1b1b}
+.pills{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13.5px}
+.pills .pg{display:inline-flex;align-items:center;gap:8px}
+.pills .pg b{font-weight:500}
 footer{color:var(--ink-3);font-size:12.5px;margin-top:28px}
 </style>
 </head>
@@ -361,7 +374,7 @@ function pintarMeta() {
     h('span', null, 'Negocio a tiempo: ', h('b', null, `≤ ${r.ventanaNegocioHoras} h`)),
     h('span', null, 'Contacto desfasado: ', h('b', null, `> ${r.desfaseMin} min`)),
   );
-  $('#foot').textContent = 'Los datos se leen de las bases de cada proveedor y de HubSpot en modo de solo lectura. El reporte se actualiza solo cada hora.';
+  $('#foot').textContent = 'Los datos se leen de Meta, de las bases de cada proveedor y de HubSpot en modo de solo lectura. El reporte se actualiza solo cada hora.';
 }
 
 /* ---------- Agregados ---------- */
@@ -401,6 +414,7 @@ addEventListener('scroll', ocultarTip, { passive: true });
 addEventListener('hashchange', ruta);
 function ruta() {
   ocultarTip();
+  if (/^#\/meta\b/.test(location.hash)) { vistaConciliacion(); scrollTo({ top: 0 }); return; }
   const m = location.hash.match(/^#\/p\/([\w-]+)/);
   const i = m ? S.data.proveedores.findIndex(p => p.id === m[1]) : -1;
   if (i >= 0) vistaProveedor(i); else vistaInicio();
@@ -422,6 +436,7 @@ function vistaInicio() {
       tile('Ya están en HubSpot', `${pct(todos.enHs, todos.total)}`, `${fNum(todos.enHs)} con contacto`, '%'),
       tile('Con negocio a tiempo', `${pct(todos.completo, todos.total)}`, `${fNum(todos.completo)} en ≤ ${d.reglas.ventanaNegocioHoras} h`, '%'),
       tile('Por resolver', fNum(todos.porResolver), `${fNum(todos.sin_negocio)} sin negocio · ${fNum(todos.sin_contacto)} sin contacto`)),
+    tarjetaConciliacion(),
     h('div', { class: 'grid-prov' }, cards),
     comoSeLee());
 }
@@ -459,6 +474,158 @@ function comoSeLee() {
       h('dt', null, badge('sin_negocio')), h('dd', null, 'El contacto existe, pero no tiene ningún negocio de ese programa. Son los negocios que quedaron pendientes.'),
       h('dt', null, badge('sin_contacto')), h('dd', null, 'El correo no aparece en HubSpot, ni como correo principal ni como secundario.'),
       h('dt', null, h('span', { class: 'flag' }, 'Desfasado')), h('dd', null, `El contacto se creó en HubSpot más de ${r.desfaseMin} min después del lead (por ejemplo, porque entró por una importación y no por la sincronización).`)));
+}
+
+/* ---------- Meta → HubSpot (conciliación) ---------- */
+const PG_EST = {
+  ok:         { lbl: 'Conectada',         v: '--st-good' },
+  sin_acceso: { lbl: 'Acceso pendiente',  v: '--st-neutral' },
+  error:      { lbl: 'Sin lectura en esta actualización', v: '--st-critical' },
+};
+function pillPagina(estado) {
+  const e = PG_EST[estado] || PG_EST.error;
+  return h('span', { class: 'pill' }, h('i', { style: `background:var(${e.v})`, 'aria-hidden': 'true' }), e.lbl);
+}
+// Porcentaje para la conciliación: con un decimal y sin redondear a 100 % si falta alguno.
+function pctC(a, b) { if (!b) return '0'; if (a >= b) return '100'; const x = Math.floor((a / b) * 1000) / 10; return x.toLocaleString('es-MX', { maximumFractionDigits: 1 }); }
+function nombreProv(id) { return (S.data.proveedores.find(p => p.id === id) || {}).nombre || '—'; }
+function veredicto(t) {
+  if (!t.meta) return { ok: true, txt: 'En este periodo no hay leads de Meta en las páginas conectadas.' };
+  if (!t.faltan) return { ok: true, txt: `Sí. Los ${fNum(t.meta)} leads que Meta registró en este periodo están en HubSpot.` };
+  return { ok: false, txt: `Llegaron ${fNum(t.coinciden)} de ${fNum(t.meta)} (${pctC(t.coinciden, t.meta)} %). ${t.faltan === 1 ? 'Falta 1 lead' : `Faltan ${fNum(t.faltan)} leads`} por llegar a HubSpot.` };
+}
+function lineaVeredicto(t) {
+  const v = veredicto(t);
+  return h('div', { class: 'verdict' + (v.ok ? ' ok' : ' warn') },
+    h('span', { class: 'ico', 'aria-hidden': 'true' }, v.ok ? '✓' : '!'), h('p', null, v.txt));
+}
+function periodoConc(c) { return `del ${fDia(c.desde)} al ${fDia(c.hasta)}`; }
+
+function tarjetaConciliacion() {
+  const c = S.data.conciliacion;
+  if (!c) return null;
+  const card = h('section', { class: 'card cmp' });
+  card.append(h('div', { class: 'cmp-head' },
+    h('div', { class: 'sec-head', style: 'margin-bottom:0' },
+      h('div', { class: 'eyebrow' }, 'Meta → HubSpot'),
+      h('h2', null, '¿Llegan a HubSpot todos los leads de Meta?')),
+    c.error ? null : h('a', { class: 'go', href: '#/meta' }, 'Ver la comparación →')));
+  if (c.error) {
+    card.append(h('p', { class: 'sub', style: 'margin-top:10px' }, 'En esta actualización no se pudo leer Meta. Se vuelve a intentar sola en la siguiente actualización.'));
+    return card;
+  }
+  const t = c.total, conectadas = c.paginas.filter(p => p.estado === 'ok').length;
+  card.append(
+    h('p', { class: 'sub', style: 'margin:8px 0 14px;max-width:72ch;font-size:14px' },
+      `Comparamos, uno por uno, los leads que Meta registró en los formularios de las páginas conectadas contra lo que llegó a HubSpot, ${periodoConc(c)} (Meta conserva los leads de los últimos 90 días).`),
+    lineaVeredicto(t),
+    h('div', { class: 'prov-nums', style: 'margin:16px 0 14px' },
+      num('Leads en Meta', fNum(t.meta)), num('Llegaron a HubSpot', pctC(t.coinciden, t.meta), '%'), num('No llegaron', fNum(t.faltan)), num('Páginas conectadas', `${conectadas}`, `de ${c.paginas.length}`)),
+    h('div', { class: 'pills' }, c.paginas.map(p => h('span', { class: 'pg' }, h('b', null, p.nombre || p.id), pillPagina(p.estado)))));
+  return card;
+}
+
+function claveASemana(k) {
+  const [y, m, d] = k.split('-').map(Number); const u = Date.UTC(y, m - 1, d);
+  return u - ((new Date(u).getUTCDay() + 6) % 7) * 864e5;
+}
+function barraConc(llegaron, faltan) {
+  const bar = h('div', { class: 'hbar', role: 'img', 'aria-label': `Llegaron ${llegaron}, no llegaron ${faltan}`, style: 'height:8px;min-width:90px' });
+  if (llegaron) bar.append(h('span', { style: `flex:${llegaron};background:var(--st-good)` }));
+  if (faltan) bar.append(h('span', { style: `flex:${faltan};background:var(--st-critical)` }));
+  return bar;
+}
+
+function vistaConciliacion() {
+  const d = S.data, c = d.conciliacion, v = $('#view');
+  const atras = h('a', { class: 'back', href: '#/' }, '← Inicio');
+  if (!c || c.error) {
+    v.replaceChildren(atras, h('section', { class: 'card' }, h('h2', null, 'Meta → HubSpot'),
+      h('p', { class: 'sub', style: 'margin-top:6px' }, c ? 'En esta actualización no se pudo leer Meta. Se vuelve a intentar sola en la siguiente actualización.' : 'La comparación con Meta todavía no está configurada.')));
+    return;
+  }
+  const t = c.total;
+  const pagNom = i => c.paginas[i]?.nombre || c.paginas[i]?.id || '';
+
+  // Por página
+  const tPag = h('section', { class: 'card' },
+    h('div', { class: 'sec-head' }, h('h2', null, 'Por página de Facebook'),
+      h('p', null, 'Las páginas con acceso pendiente se suman aquí solas en cuanto quede su acceso.')),
+    h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, 'Página'), h('th', null, 'Estado'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron a HubSpot'), h('th', { class: 'num' }, 'No llegaron'), h('th', null, ''))),
+      h('tbody', null, c.paginas.map(p => h('tr', null,
+        h('td', null, p.nombre || p.id), h('td', null, pillPagina(p.estado)),
+        h('td', { class: 'num' }, p.estado === 'ok' ? fNum(p.meta) : '—'),
+        h('td', { class: 'num' }, p.estado === 'ok' ? `${fNum(p.coinciden)}${p.meta ? ` (${pctC(p.coinciden, p.meta)} %)` : ''}` : '—'),
+        h('td', { class: 'num' }, p.estado === 'ok' ? fNum(p.faltan) : '—'),
+        h('td', null, p.estado === 'ok' && p.meta ? barraConc(p.coinciden, p.faltan) : null)))),
+      h('tfoot', null, h('tr', null, h('td', null, 'Total'), h('td', null, ''), h('td', { class: 'num' }, fNum(t.meta)), h('td', { class: 'num' }, `${fNum(t.coinciden)}${t.meta ? ` (${pctC(t.coinciden, t.meta)} %)` : ''}`), h('td', { class: 'num' }, fNum(t.faltan)), h('td', null, ''))))));
+
+  // Semana a semana
+  const sem = new Map();
+  for (const [k, [m, ok]] of Object.entries(c.dias || {})) { const u = claveASemana(k); const x = sem.get(u) || [0, 0]; x[0] += m; x[1] += ok; sem.set(u, x); }
+  const semanas = [...sem.entries()].sort((a, b) => b[0] - a[0]);
+  const tSem = h('section', { class: 'card' },
+    h('div', { class: 'sec-head' }, h('h2', null, 'Semana a semana'), h('p', null, 'Leads que Meta registró cada semana y cuántos de ellos están en HubSpot.')),
+    semanas.length ? h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, 'Semana'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron a HubSpot'), h('th', { class: 'num' }, 'No llegaron'), h('th', null, ''))),
+      h('tbody', null, semanas.map(([u, [m, ok]]) => h('tr', null, h('td', null, etiquetaPeriodo(u, 'semana')), h('td', { class: 'num' }, fNum(m)), h('td', { class: 'num' }, fNum(ok)), h('td', { class: 'num' }, fNum(m - ok)), h('td', null, barraConc(ok, m - ok)))))))
+      : h('p', { class: 'empty' }, 'No hay leads en este periodo.'));
+
+  // Por formulario
+  const forms = c.formularios.filter(f => f.meta || f.soloHs);
+  const tForm = h('section', { class: 'card' },
+    h('div', { class: 'sec-head' }, h('h2', null, 'Por formulario'), h('p', null, 'Cada formulario de Meta con leads en el periodo y su agencia.')),
+    forms.length ? h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, 'Formulario'), h('th', null, 'Página'), h('th', null, 'Agencia'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron'), h('th', { class: 'num' }, 'No llegaron'), h('th', { class: 'num' }, 'Solo en HubSpot'))),
+      h('tbody', null, forms.slice().sort((a, b) => b.meta - a.meta).map(f => h('tr', null,
+        h('td', { style: 'min-width:240px' }, f.n), h('td', null, pagNom(f.pg)), h('td', null, f.prov ? nombreProv(f.prov) : '—'),
+        h('td', { class: 'num' }, fNum(f.meta)), h('td', { class: 'num' }, fNum(f.coinciden)), h('td', { class: 'num' }, fNum(f.faltan)), h('td', { class: 'num' }, fNum(f.soloHs)))))))
+      : h('p', { class: 'empty' }, 'No hay formularios con leads en este periodo.'));
+
+  // Lista de los que no llegaron
+  const tFalt = h('section', { class: 'card' },
+    h('div', { class: 'sec-head' }, h('h2', null, 'Leads que no llegaron a HubSpot'),
+      h('p', null, t.faltan ? 'Estos leads están en Meta y no aparecen en HubSpot. Para revisarlos con calma, puedes descargarlos en CSV.' : 'Aquí aparecerían, uno por uno, los leads de Meta que no estén en HubSpot.')));
+  if (!c.faltantes.length) tFalt.append(h('p', { class: 'empty' }, 'No hay. Todos los leads de Meta de este periodo están en HubSpot.'));
+  else {
+    tFalt.append(h('div', { class: 'list-tools' }, h('span', { class: 'muted', style: 'font-size:13px' }, `${fNum(c.faltantes.length)} lead${c.faltantes.length === 1 ? '' : 's'}${c.faltantesRecortados ? ' (se muestran los más recientes)' : ''}`),
+      h('button', { class: 'btn', type: 'button', onclick: () => exportarFaltantes(c) }, 'Descargar CSV')));
+    tFalt.append(h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, 'Fecha del lead'), h('th', null, 'Persona'), h('th', null, 'Formulario'), h('th', null, 'Página'))),
+      h('tbody', null, c.faltantes.slice(0, 200).map(l => h('tr', null,
+        h('td', { style: 'white-space:nowrap' }, fDiaHora(l.t)), h('td', { class: 'person' }, h('b', null, l.n || '—'), h('span', null, l.e || 'Sin correo')),
+        h('td', null, l.f), h('td', null, pagNom(l.pg))))))));
+  }
+
+  // Cómo se compara
+  const como = h('section', { class: 'card how' },
+    h('h2', null, 'Cómo se hace la comparación'),
+    h('dl', null,
+      h('dt', null, h('b', null, 'De dónde sale')), h('dd', null, 'Los leads se leen directo de Meta, de cada formulario de las páginas conectadas, en modo de solo lectura.'),
+      h('dt', null, h('b', null, 'Cómo se busca')), h('dd', null, 'Cada lead se busca en HubSpot entre los envíos de ese mismo formulario: primero por su correo y, si no aparece, por la hora exacta en que llegó.'),
+      h('dt', null, h('b', null, 'Periodo')), h('dd', null, `Meta guarda los leads de los últimos 90 días, por eso la comparación cubre ${periodoConc(c)}. Lo anterior se ve en la tarjeta de cada proveedor.`),
+      h('dt', null, h('b', null, 'Leads muy recientes')), h('dd', null, 'Los leads de la última media hora se comparan en la siguiente actualización, para darle tiempo a la sincronización.'),
+      h('dt', null, h('b', null, 'Solo en HubSpot')), h('dd', null, 'Envíos que están en HubSpot sin su par en Meta, por ejemplo cuando un mismo lead entró dos veces. No es un faltante.')));
+
+  v.replaceChildren(atras,
+    h('div', { style: 'display:grid;gap:6px;margin-bottom:18px' }, h('div', { class: 'eyebrow' }, 'Meta → HubSpot'), h('h2', { style: 'font-size:24px' }, '¿Llegan a HubSpot todos los leads de Meta?'),
+      h('div', { class: 'meta-line' }, h('span', null, 'Periodo: ', h('b', null, `${fDia(c.desde)} – ${fDia(c.hasta)}`)), h('span', null, 'Páginas conectadas: ', h('b', null, `${c.paginas.filter(p => p.estado === 'ok').length} de ${c.paginas.length}`)))),
+    h('div', { style: 'margin-bottom:18px' }, lineaVeredicto(t)),
+    h('div', { class: 'tiles t4' },
+      tile('Leads en Meta', fNum(t.meta), 'En las páginas conectadas'),
+      tile('Llegaron a HubSpot', pctC(t.coinciden, t.meta), `${fNum(t.coinciden)} de ${fNum(t.meta)}`, '%'),
+      tile('No llegaron', fNum(t.faltan), t.faltan ? 'Están en la lista de abajo' : 'Ninguno en el periodo'),
+      tile('Solo en HubSpot', fNum(t.soloHs), 'Sin su par en Meta (p. ej. duplicados)')),
+    tPag, tSem, tForm, tFalt, como);
+}
+function exportarFaltantes(c) {
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lineas = [['Fecha del lead', 'Nombre', 'Correo', 'Formulario', 'Página'].map(q).join(',')];
+  for (const l of c.faltantes) lineas.push([fDiaHora(l.t), l.n, l.e, l.f, c.paginas[l.pg]?.nombre || ''].map(q).join(','));
+  const blob = new Blob(['﻿' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = h('a', { href: URL.createObjectURL(blob), download: `meta-no-llegaron-a-hubspot-${new Date().toISOString().slice(0, 10)}.csv` });
+  document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 }
 
 /* ---------- Detalle del proveedor ---------- */
@@ -500,7 +667,8 @@ function vistaProveedor(i) {
   const seg = h('div', { class: 'seg', role: 'group', 'aria-label': 'Agrupar por' },
     [['semana', 'Semana'], ['mes', 'Mes']].map(([val, t]) => h('button', { type: 'button', 'aria-pressed': String(f.agr === val), onclick: () => { f.agr = val; vistaProveedor(i); } }, t)));
 
-  const fuente = p.fuente ? `${p.fuente.tipo === 'sheet' ? 'Google Sheet' : 'Archivos'}${p.fuente.titulo ? ` · ${p.fuente.titulo}` : ''}` : '';
+  const TIPO_FUENTE = { sheet: 'Google Sheet', hubspot: 'HubSpot', meta: 'Meta', archivos: 'Archivos' };
+  const fuente = p.fuente ? `${TIPO_FUENTE[p.fuente.tipo] || p.fuente.tipo}${p.fuente.titulo ? ` · ${p.fuente.titulo}` : ''}` : '';
   v.replaceChildren(
     h('a', { class: 'back', href: '#/' }, '← Todos los proveedores'),
     h('div', { style: 'display:grid;gap:6px;margin-bottom:18px' }, h('h2', { style: 'font-size:24px' }, p.nombre),

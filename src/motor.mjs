@@ -12,6 +12,8 @@
 //   META_TOKENS        JSON {"usuario":"…","paginas":{"<idPagina>":"…"}} para las fuentes tipo "meta"
 //   META_BASE_URL      opcional; el mini-proxy local de B&O para Meta (entonces no hace falta META_TOKENS)
 //   (Las fuentes tipo "hubspot" leen los leads de Meta que HubSpot ya sincroniza; usan el mismo HUBSPOT_TOKEN.)
+//   ("conciliacionMeta" en la configuración compara los leads de esas páginas de Meta contra lo que llegó a HubSpot;
+//    usa los tokens de página de META_TOKENS.)
 //   REPORT_PASSWORD    contraseña con la que se cifra el reporte
 // Opciones:
 //   --plain archivo.json   además escribe una copia sin cifrar (solo local; contiene datos personales)
@@ -20,7 +22,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { HubSpot } from './hubspot.mjs';
-import { leerFuente } from './fuentes.mjs';
+import { leerFuente, leerPaginasMeta, escanearLeadsMeta, asignadorDeFormularios } from './fuentes.mjs';
+import { conciliar } from './conciliacion.mjs';
 import { tablaALeads, deduplicar } from './parse.mjs';
 import { CatalogoProgramas, clasificar } from './reglas.mjs';
 import { cifrar } from './cifrado.mjs';
@@ -106,6 +109,30 @@ async function main() {
     return;
   }
 
+  // 1b) Conciliación Meta ↔ HubSpot: los leads de las páginas de Meta contra lo que llegó a HubSpot.
+  let conciliacion = null;
+  const cm = cfg.conciliacionMeta;
+  if (cm?.paginas?.length) {
+    try {
+      const ahora = Date.now();
+      const dias = Math.min(Number(cm.dias) || 88, 89);
+      const desdeC = Math.max(desde, ahora - dias * 864e5);
+      const hastaC = ahora - (Number(cm.margenMin ?? 30) * 60e3);
+      const paginas = await leerPaginasMeta({ tokens: tokensMeta, paginas: cm.paginas, desde: desdeC, version: cm.version });
+      const { envios } = await escanearLeadsMeta(hs, desde);
+      conciliacion = conciliar({ paginas, envios, desde: desdeC, hasta: hastaC, duenio: asignadorDeFormularios(cfg.proveedores || []), zona: cfg.zonaHoraria || 'America/Mexico_City' });
+      conciliacion.dias_ventana = dias;
+      for (const pg of conciliacion.paginas) {
+        log(`Meta ↔ HubSpot · ${pg.nombre || pg.id}: ${pg.estado === 'ok' ? `${pg.meta} leads en Meta, ${pg.coinciden} en HubSpot, ${pg.faltan} faltan, ${pg.soloHs} solo en HubSpot (${pg.formularios} formularios)` : `${pg.estado} ${pg.detalle}`}`);
+      }
+      const t = conciliacion.total;
+      log(`Meta ↔ HubSpot · total: ${t.meta} en Meta, ${t.coinciden} coinciden, ${t.faltan} faltan, ${t.soloHs} solo en HubSpot.`);
+    } catch (e) {
+      conciliacion = { error: e.message.replace(/EAA[0-9A-Za-z]+/g, '[token]').slice(0, 300) };
+      log(`Meta ↔ HubSpot: ERROR ${conciliacion.error}`);
+    }
+  }
+
   // 2) Catálogos de HubSpot
   const [etapas, propietarios, etqNeg, etqCon] = await Promise.all([
     hs.etapas(), hs.propietarios(),
@@ -174,6 +201,7 @@ async function main() {
     proveedores: proveedores.map(p => p._info),
     programas: dProg.lista, etapas: dEtapa.lista, propietarios: dOwner.lista, formularios,
     leads: filas,
+    conciliacion,
   };
 
   const resumen = {};
