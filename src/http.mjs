@@ -14,17 +14,26 @@ function unaVez(url, { method = 'GET', headers = {}, body } = {}) {
       if (!Object.keys(h).some(k => k.toLowerCase() === 'content-type')) h['content-type'] = 'application/json';
       h['content-length'] = Buffer.byteLength(datos);
     }
+    // Tope total por llamada: además de mantener vivo el proceso, garantiza que la promesa siempre termine.
+    let listo = false;
+    const tope = setTimeout(() => { if (!listo) req.destroy(new Error('timeout total (120 s)')); }, 120000);
+    const ok = v => { if (!listo) { listo = true; clearTimeout(tope); resolve(v); } };
+    const mal = e => { if (!listo) { listo = true; clearTimeout(tope); reject(e); } };
     const req = lib.request(u, { method, headers: h, timeout: 60000 }, res => {
       const partes = [];
       res.on('data', c => partes.push(c));
+      res.on('error', mal);
+      res.on('aborted', () => mal(new Error('respuesta interrumpida')));
+      res.on('close', () => { if (!res.complete) mal(new Error('conexión cerrada antes de terminar')); });
       res.on('end', () => {
         const texto = Buffer.concat(partes).toString('utf8');
         let json = null; try { json = texto ? JSON.parse(texto) : null; } catch { /* no es JSON */ }
-        resolve({ status: res.statusCode, headers: res.headers, texto, json });
+        ok({ status: res.statusCode, headers: res.headers, texto, json });
       });
     });
     req.on('timeout', () => req.destroy(new Error('timeout')));
-    req.on('error', reject);
+    req.on('error', mal);
+    req.on('close', () => { if (!listo) setTimeout(() => mal(new Error('conexión cerrada sin respuesta')), 1000); });
     if (datos != null) req.write(datos);
     req.end();
   });

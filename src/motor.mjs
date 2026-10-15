@@ -118,7 +118,10 @@ async function main() {
       const dias = Math.min(Number(cm.dias) || 88, 89);
       const desdeC = Math.max(desde, ahora - dias * 864e5);
       const hastaC = ahora - (Number(cm.margenMin ?? 30) * 60e3);
-      const paginas = await leerPaginasMeta({ tokens: tokensMeta, paginas: cm.paginas, desde: desdeC, version: cm.version });
+      let reloj;
+      const tope = new Promise((_, rej) => { reloj = setTimeout(() => rej(new Error('Meta tardó más de 8 min; se omite en esta actualización')), 8 * 60e3); });
+      const paginas = await Promise.race([leerPaginasMeta({ tokens: tokensMeta, paginas: cm.paginas, desde: desdeC, version: cm.version, avance: t => log(`Meta · ${t}`) }), tope])
+        .finally(() => clearTimeout(reloj));
       const { envios } = await escanearLeadsMeta(hs, desde);
       conciliacion = conciliar({ paginas, envios, desde: desdeC, hasta: hastaC, duenio: asignadorDeFormularios(cfg.proveedores || []), zona: cfg.zonaHoraria || 'America/Mexico_City' });
       conciliacion.dias_ventana = dias;
@@ -217,4 +220,10 @@ async function main() {
   if (args.plain) { fs.writeFileSync(args.plain, JSON.stringify(carga, null, 1)); log(`Copia SIN cifrar (solo uso local, contiene datos personales): ${args.plain}`); }
 }
 
-main().catch(e => { console.error('ERROR:', e.message); process.exit(1); });
+// Si el proceso se queda sin trabajo pendiente antes de terminar (una promesa que nunca se resolvió),
+// se marca como error para que GitHub no publique un sitio sin datos.
+let terminado = false;
+process.on('beforeExit', () => {
+  if (!terminado) { console.error('ERROR: el motor se detuvo antes de terminar (no se publica).'); process.exitCode = 1; }
+});
+main().then(() => { terminado = true; }).catch(e => { terminado = true; console.error('ERROR:', e.message); process.exit(1); });

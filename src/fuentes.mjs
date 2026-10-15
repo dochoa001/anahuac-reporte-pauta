@@ -180,7 +180,7 @@ async function leerMeta(fuente, { tokens, desde } = {}) {
 // Una página sin token sale como "sin_acceso" (no tumba la corrida). Solo se piden los formularios que
 // tienen leads recientes (leads_count > 0) o que se crearon dentro de la ventana; Meta guarda ~90 días.
 // Privacidad: no escribe en consola; correo y nombre solo viajan en memoria y en el reporte cifrado.
-export async function leerPaginasMeta({ tokens, paginas = [], desde, version } = {}) {
+export async function leerPaginasMeta({ tokens, paginas = [], desde, version, avance = () => {} } = {}) {
   const m = clienteMeta({ tokens, version });
   const filtro = JSON.stringify([{ field: 'time_created', operator: 'GREATER_THAN', value: Math.floor(desde / 1000) - 1 }]);
   const salida = [];
@@ -195,6 +195,7 @@ export async function leerPaginasMeta({ tokens, paginas = [], desde, version } =
       const forms = await m.todo(`${id}/leadgen_forms`, { fields: 'id,name,leads_count,created_time' }, tipo, 'leadgen_forms');
       r.formularios = forms.map(f => ({ id: String(f.id), n: f.name || '' }));
       const conLeads = forms.filter(f => !(Number(f.leads_count) === 0) || parseFecha(f.created_time) >= desde);
+      avance(`${r.nombre}: ${forms.length} formularios, ${conLeads.length} con leads recientes`);
       await enParalelo(conLeads, 3, async f => {
         const ls = await m.todo(`${f.id}/leads`, { fields: 'id,created_time,field_data', filtering: filtro }, tipo, 'leads por formulario');
         for (const l of ls) {
@@ -204,6 +205,7 @@ export async function leerPaginasMeta({ tokens, paginas = [], desde, version } =
           r.leads.push({ id: String(l.id || ''), t, formId: String(f.id), formNombre: f.name || '', email: limpiarEmail(c.email), nombre: c.nombre });
         }
       });
+      avance(`${r.nombre}: ${r.leads.length} leads leídos`);
     } catch (e) {
       r.estado = 'error'; r.detalle = e.message.replace(/EAA[0-9A-Za-z]+/g, '[token]').slice(0, 200);
     }
