@@ -14,7 +14,7 @@
   --bg:#F4F6F9; --surface:#FFFFFF; --surface-2:#EDF1F6; --chart:#FCFCFB;
   --ink:#16202B; --ink-2:#4F5D6C; --ink-3:#7E8B99;
   --line:#DCE3EB; --line-2:#EAEFF4; --grid:#E6EAEF; --axis:#C9D1DA;
-  --accent:#2a78d6; --accent-ink:#1c5cab; --hs:#eb6834;
+  --accent:#2a78d6; --accent-ink:#1c5cab; --hs:#eb6834; --hs-ink:#b4471b; --crit-ink:#b02a2a;
   --st-good:#0ca30c; --st-warn:#fab219; --st-neutral:#9d9c95; --st-serious:#ec835a; --st-critical:#d03b3b;
   --focus:#2a78d6;
   --shadow:0 1px 2px rgba(22,32,43,.06),0 8px 24px -12px rgba(22,32,43,.18);
@@ -27,7 +27,7 @@
     --bg:#0F141B; --surface:#171E27; --surface-2:#1F2833; --chart:#171E27;
     --ink:#EEF2F6; --ink-2:#A9B5C2; --ink-3:#7B8794;
     --line:#2A3441; --line-2:#222C38; --grid:#253040; --axis:#364354;
-    --accent:#3987e5; --accent-ink:#86b6ef; --hs:#d95926;
+    --accent:#3987e5; --accent-ink:#86b6ef; --hs:#d95926; --hs-ink:#f2925f; --crit-ink:#f07575;
     --st-neutral:#7a7973;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6);
   }
@@ -37,7 +37,7 @@
   --bg:#0F141B; --surface:#171E27; --surface-2:#1F2833; --chart:#171E27;
   --ink:#EEF2F6; --ink-2:#A9B5C2; --ink-3:#7B8794;
   --line:#2A3441; --line-2:#222C38; --grid:#253040; --axis:#364354;
-  --accent:#3987e5; --accent-ink:#86b6ef; --hs:#d95926;
+  --accent:#3987e5; --accent-ink:#86b6ef; --hs:#d95926; --hs-ink:#f2925f; --crit-ink:#f07575;
   --st-neutral:#7a7973;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -14px rgba(0,0,0,.6);
 }
@@ -158,7 +158,7 @@ details.tbl summary{cursor:pointer;font-size:13.5px;font-weight:500;color:var(--
 .chip .c{font-variant-numeric:tabular-nums;opacity:.75}
 .list-tools{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-bottom:10px}
 .list-tools input{min-height:38px;padding:6px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);width:260px;max-width:100%}
-.person{min-width:200px}
+.person{min-width:180px}
 .person b{font-weight:500;display:block}
 .person span{color:var(--ink-3);font-size:12.5px;overflow-wrap:anywhere}
 .links a{display:inline-block;margin-right:10px;white-space:nowrap}
@@ -184,6 +184,116 @@ details.tbl summary{cursor:pointer;font-size:13.5px;font-weight:500;color:var(--
 .pills .pg{display:inline-flex;align-items:center;gap:8px}
 .pills .pg b{font-weight:500}
 footer{color:var(--ink-3);font-size:12.5px;margin-top:28px}
+
+/* Íconos y botones */
+.ic{flex:none;display:inline-block;vertical-align:-2px}
+.btn.sm{min-height:32px;padding:4px 11px;font-size:13px;border-radius:8px;gap:6px;text-decoration:none}
+a.btn{text-decoration:none;color:inherit}
+.btn.go{color:var(--accent-ink);border-color:color-mix(in srgb,var(--accent) 40%,var(--line));background:color-mix(in srgb,var(--accent) 7%,var(--surface));font-weight:600}
+.btn.go:hover{background:color-mix(in srgb,var(--accent) 15%,var(--surface))}
+.btn.hs{color:var(--hs-ink);border-color:color-mix(in srgb,var(--hs) 45%,var(--line));background:color-mix(in srgb,var(--hs) 7%,var(--surface));font-weight:600}
+.btn.hs:hover{background:color-mix(in srgb,var(--hs) 15%,var(--surface))}
+.btn.warn{color:var(--crit-ink);border-color:color-mix(in srgb,var(--st-critical) 40%,var(--line));background:color-mix(in srgb,var(--st-critical) 7%,var(--surface));font-weight:600}
+.btn.warn:hover{background:color-mix(in srgb,var(--st-critical) 14%,var(--surface))}
+.btn.lg{min-height:44px;padding:10px 16px;font-size:14.5px;border-radius:10px}
+.back{min-height:34px;padding:4px 12px 4px 8px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink-2);font-weight:500}
+.back:hover{color:var(--ink);border-color:var(--accent)}
+
+/* Periodo */
+.periodo{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:22px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.periodo .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0}
+.periodo .row.split{justify-content:space-between;gap:10px 18px}
+.periodo .cap{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-right:4px}
+.periodo .chips{margin:0}
+.periodo .chip{min-height:34px}
+.sel-mas{min-height:34px;border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--surface);font-size:13px;cursor:pointer;max-width:100%}
+.sel-mas.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.fechas{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.fecha{display:flex;gap:8px;align-items:center}
+.fechas label{font-size:12.5px;color:var(--ink-3);font-weight:500}
+.fechas input{min-height:36px;padding:4px 8px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-variant-numeric:tabular-nums;max-width:100%}
+.fechas input.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.meses{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.meses .cap{margin-right:2px}
+.meses .chip{min-height:30px;padding:3px 11px;font-size:12.5px}
+.rango-txt{font-size:13.5px;color:var(--ink-2)}
+.rango-txt b{color:var(--ink);font-weight:600}
+@media (max-width:640px){
+  .periodo{padding:12px}
+  .periodo .row.scroll{flex:1 1 100%!important;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -12px;padding:0 12px 2px}
+  .fechas{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .fecha{display:grid;gap:4px}
+  .fecha input{width:100%}
+  .periodo .row.scroll::-webkit-scrollbar{display:none}
+  .periodo .row.scroll .chip,.periodo .row.scroll .sel-mas{flex:none}
+}
+
+/* KPIs que se abren */
+a.tile{color:inherit;text-decoration:none;box-shadow:var(--shadow);transition:border-color .15s,transform .15s,box-shadow .15s;position:relative}
+a.tile:hover{border-color:var(--accent);transform:translateY(-1px)}
+a.tile.act{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent),var(--shadow)}
+a.tile .ver{margin-top:8px;font-size:12.5px;font-weight:600;color:var(--accent-ink);display:inline-flex;gap:5px;align-items:center}
+a.tile.alerta .n-val{color:var(--crit-ink)}
+.intro{max-width:72ch;margin-bottom:18px}
+.sec-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;margin:6px 0 12px}
+
+/* Tarjeta de proveedor */
+.prov h2 a{color:inherit;text-decoration:none}
+.prov h2 a:hover{color:var(--accent-ink);text-decoration:underline}
+.hbar a{display:block;height:100%;min-width:3px}
+.hbar a:hover{filter:brightness(1.1)}
+.stchips{display:flex;flex-wrap:wrap;gap:6px}
+.stchip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:12.5px;text-decoration:none;color:var(--ink-2);min-height:28px}
+.stchip:hover{border-color:var(--accent);color:var(--ink)}
+.stchip i{width:8px;height:8px;border-radius:50%;flex:none}
+.stchip b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.prov-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+
+/* Números que se abren */
+a.nlink{display:inline-block;min-width:30px;padding:1px 7px;border-radius:7px;text-decoration:none;color:var(--accent-ink);font-weight:600;background:color-mix(in srgb,var(--accent) 8%,transparent);text-align:right}
+a.nlink:hover{background:color-mix(in srgb,var(--accent) 18%,transparent);text-decoration:underline}
+a.nlink.crit{color:var(--crit-ink);background:color-mix(in srgb,var(--st-critical) 9%,transparent)}
+.n0{color:var(--ink-3);padding:1px 7px;display:inline-block}
+a.plink{color:var(--ink);text-decoration:none;font-weight:500}
+a.plink:hover{color:var(--accent-ink);text-decoration:underline}
+tr.act td{background:color-mix(in srgb,var(--accent) 7%,transparent)}
+td.acc{white-space:nowrap;width:1%}
+td.acc .btn{display:flex;width:100%;margin:0 0 6px}
+td.acc .btn:last-child{margin-bottom:0}
+td.cuando{white-space:nowrap}
+td.cuando span{display:block;color:var(--ink-3);font-size:12.5px}
+section[id]{scroll-margin-top:16px}
+.activos{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:-4px 0 12px}
+.fchip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 6px 3px 12px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));font-size:13px;color:var(--ink)}
+.fchip a{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;color:var(--ink-2)}
+.fchip a:hover{background:var(--surface-2);color:var(--ink)}
+.nota{background:var(--surface-2);border-radius:10px;padding:10px 14px;font-size:13.5px;color:var(--ink-2);margin-bottom:16px}
+
+/* Detalle del lead */
+dialog.drawer{position:fixed;inset:0 0 0 auto;margin:0;width:min(480px,100vw);max-width:100vw;height:100%;max-height:100%;border:0;border-left:1px solid var(--line);padding:0;background:var(--surface);color:var(--ink);box-shadow:-24px 0 48px -24px rgba(0,0,0,.4);overflow-y:auto}
+dialog.drawer::backdrop{background:rgba(15,20,27,.45)}
+.dw-head{position:sticky;top:0;z-index:1;background:var(--surface);padding:18px 20px 14px;border-bottom:1px solid var(--line-2);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.dw-head h2{font-size:20px;overflow-wrap:anywhere}
+.dw-head .mail{color:var(--ink-2);font-size:13.5px;overflow-wrap:anywhere}
+.dw-x{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:inline-grid;place-items:center;cursor:pointer;flex:none}
+.dw-x:hover{background:var(--surface-2)}
+.dw-body{padding:18px 20px 32px;display:grid;gap:20px}
+.dw-body h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-family:var(--body);font-weight:600;margin-bottom:10px}
+.dw-acc{display:flex;flex-wrap:wrap;gap:8px}
+.que{background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:14px}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{position:relative;padding:0 0 18px 30px}
+.tl li::before{content:'';position:absolute;left:7px;top:20px;bottom:2px;width:2px;background:var(--line)}
+.tl li:last-child{padding-bottom:0}
+.tl li:last-child::before{display:none}
+.tl .dot{position:absolute;left:0;top:3px;width:16px;height:16px;border-radius:50%;box-shadow:0 0 0 3px var(--surface)}
+.tl .tt{font-weight:600;font-size:14px}
+.tl .cu{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.tl .tx{font-size:13.5px;color:var(--ink-2);margin-top:2px}
+.kv{display:grid;grid-template-columns:minmax(110px,auto) 1fr;gap:8px 16px;font-size:13.5px;margin:0}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0;overflow-wrap:anywhere}
+@media (max-width:560px){.kv{grid-template-columns:1fr;gap:2px}.kv dd{margin-bottom:8px}}
 </style>
 </head>
 <body>
@@ -218,16 +328,21 @@ footer{color:var(--ink-3);font-size:12.5px;margin-top:28px}
       </div>
     </header>
     <div class="notice" id="notice" role="status" hidden></div>
+    <section class="periodo" id="periodo" aria-label="Periodo del reporte"></section>
     <main id="view"></main>
     <footer id="foot"></footer>
   </div>
 </div>
 <div class="tip" id="tip" hidden></div>
+<dialog class="drawer" id="drawer" aria-labelledby="dw-nombre"></dialog>
 
 <script>
 'use strict';
 /* ---------- Estado ---------- */
-const S = { data: null, sobre: null, llave: null, filtros: {}, lista: {} };
+// La ruta (#/…) y sus filtros viven en el hash: #/p/nods?r=30&v=resolver&g=3
+//   r = periodo (todo, 7, 30, mes, m:2026-09, custom…) · d/h = desde/hasta (custom) · a = agrupar (dia|semana|mes)
+//   v = vista de la lista · g = programa · pv = proveedor (vista global) · pg/fm = página/formulario (Meta) · ir = sección a mostrar
+const S = { data: null, sobre: null, llave: null, path: '/', q: new URLSearchParams(), rango: { p: 'todo', d: '', h: '' }, lista: {}, ext: { lo: 0, hi: 0 }, meses: [] };
 const EST = {
   completo:     { lbl: 'Negocio a tiempo', corto: 'A tiempo', v: '--st-good',     ico: '✓', fg: '#fff' },
   previo:       { lbl: 'Ya tenía negocio', corto: 'Ya tenía', v: '--st-neutral',  ico: '↺', fg: '#fff' },
@@ -258,45 +373,161 @@ function s(tag, attrs, ...kids) {
   for (const c of kids.flat()) if (c != null) el.append(c instanceof Node ? c : document.createTextNode(String(c)));
   return el;
 }
-const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 function badge(st, texto) {
   const e = EST[st];
   return h('span', { class: 'st' }, h('i', { style: `background:var(${e.v});color:${e.fg}`, 'aria-hidden': 'true' }, e.ico), texto ?? e.lbl);
 }
+const icono = d => s('svg', { class: 'ic', viewBox: '0 0 16 16', width: 14, height: 14, 'aria-hidden': 'true', fill: 'none', stroke: 'currentColor', 'stroke-width': 1.8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, s('path', { d }));
+const flecha = () => icono('M3 8h9.5M8.5 4l4 4-4 4');
+const externo = () => icono('M9.5 2.5h4v4M13.5 2.5l-6 6M11.5 9.5v4h-9v-9h4');
+const atrasIc = () => icono('M13 8H3.5M7.5 4l-4 4 4 4');
+const cruz = () => icono('M4.5 4.5l7 7M11.5 4.5l-7 7');
+const lupa = () => icono('M7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10zM10.6 10.6L14 14');
 
-/* ---------- Formatos (zona del portal) ---------- */
+/* ---------- Formatos y días (zona del portal) ---------- */
+// Un "día" se guarda como la medianoche UTC de esa fecha en la zona del portal (k).
+const DIA = 864e5;
 let F = {};
 function prepararFormatos(zona) {
   const o = { timeZone: zona };
   F.dia = new Intl.DateTimeFormat('es-MX', { ...o, day: 'numeric', month: 'short', year: 'numeric' });
-  F.diaCorto = new Intl.DateTimeFormat('es-MX', { ...o, day: 'numeric', month: 'short' });
   F.diaHora = new Intl.DateTimeFormat('es-MX', { ...o, day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
   F.partes = new Intl.DateTimeFormat('en-CA', { ...o, year: 'numeric', month: '2-digit', day: '2-digit' });
+  F.hora = new Intl.DateTimeFormat('es-MX', { ...o, hour: 'numeric', minute: '2-digit' });
   F.num = new Intl.NumberFormat('es-MX');
 }
 const fDia = t => F.dia.format(t).replace(/\./g, '');
 const fDiaHora = t => F.diaHora.format(t).replace(/\./g, '');
+const fechaCorta = t => F.dia.format(t).replace(/\./g, '');
+const horaCorta = t => F.hora.format(t).replace(/\./g, '');
 const fNum = n => F.num.format(n);
 const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-function ymd(t) { const [y, m, d] = F.partes.format(t).split('-').map(Number); return { y, m, d }; }
-function claveDia(t) { const { y, m, d } = ymd(t); return Date.UTC(y, m - 1, d); }
-function inicioSemana(t) { const u = claveDia(t); const dow = (new Date(u).getUTCDay() + 6) % 7; return u - dow * 864e5; }
-function inicioMes(t) { const { y, m } = ymd(t); return Date.UTC(y, m - 1, 1); }
+const MESES_L = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+function claveDia(t) { const [y, m, d] = F.partes.format(t).split('-').map(Number); return Date.UTC(y, m - 1, d); }
+const hoyK = () => claveDia(Date.now());
+const semanaK = k => k - ((new Date(k).getUTCDay() + 6) % 7) * DIA;
+const mesK = k => { const a = new Date(k); return Date.UTC(a.getUTCFullYear(), a.getUTCMonth(), 1); };
+const finMesK = k => { const a = new Date(k); return Date.UTC(a.getUTCFullYear(), a.getUTCMonth() + 1, 1) - DIA; };
+function kDeFecha(x) { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(x || ''); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3]) : null; }
+const fechaDeK = k => new Date(k).toISOString().slice(0, 10);
+const fK = (k, anio = true) => { const a = new Date(k); return `${a.getUTCDate()} ${MESES[a.getUTCMonth()]}${anio ? ' ' + a.getUTCFullYear() : ''}`; };
+const llaveDe = (k, agr) => (agr === 'mes' ? mesK(k) : agr === 'semana' ? semanaK(k) : k);
+const finPeriodo = (u, agr) => (agr === 'mes' ? finMesK(u) : agr === 'semana' ? u + 6 * DIA : u);
+const siguiente = (u, agr) => finPeriodo(u, agr) + DIA;
 function etiquetaPeriodo(u, agr) {
   const a = new Date(u);
-  if (agr === 'mes') return `${MESES[a.getUTCMonth()]} ${a.getUTCFullYear()}`;
-  const b = new Date(u + 6 * 864e5);
+  if (agr === 'mes') return `${MESES_L[a.getUTCMonth()]} ${a.getUTCFullYear()}`;
+  if (agr === 'dia') return fK(u);
+  const b = new Date(u + 6 * DIA);
   return a.getUTCMonth() === b.getUTCMonth()
     ? `${a.getUTCDate()} – ${b.getUTCDate()} ${MESES[b.getUTCMonth()]}`
     : `${a.getUTCDate()} ${MESES[a.getUTCMonth()]} – ${b.getUTCDate()} ${MESES[b.getUTCMonth()]}`;
 }
-function siguiente(u, agr) { if (agr === 'mes') { const a = new Date(u); return Date.UTC(a.getUTCFullYear(), a.getUTCMonth() + 1, 1); } return u + 7 * 864e5; }
 function duracion(horas) {
   const a = Math.abs(horas);
   if (a < 1) return `${Math.max(1, Math.round(a * 60))} min`;
   if (a < 48) return `${Math.round(a)} h`;
   const d = Math.round(a / 24); return `${d} día${d === 1 ? '' : 's'}`;
+}
+
+/* ---------- Periodo ---------- */
+const PRESETS = {
+  todo:          { t: 'Todo' },
+  '7':           { t: 'Últimos 7 días',  f: k => [k - 6 * DIA, k] },
+  '30':          { t: 'Últimos 30 días', f: k => [k - 29 * DIA, k] },
+  mes:           { t: 'Este mes',        f: k => [mesK(k), k] },
+  mes_pasado:    { t: 'Mes pasado',      f: k => [mesK(mesK(k) - DIA), mesK(k) - DIA] },
+  '90':          { t: 'Últimos 90 días', f: k => [k - 89 * DIA, k] },
+  hoy:           { t: 'Hoy',             f: k => [k, k] },
+  ayer:          { t: 'Ayer',            f: k => [k - DIA, k - DIA] },
+  semana:        { t: 'Esta semana',     f: k => [semanaK(k), k] },
+  semana_pasada: { t: 'Semana pasada',   f: k => [semanaK(k) - 7 * DIA, semanaK(k) - DIA] },
+  '14':          { t: 'Últimos 14 días', f: k => [k - 13 * DIA, k] },
+  trimestre:     { t: 'Este trimestre',  f: k => { const a = new Date(k); return [Date.UTC(a.getUTCFullYear(), Math.floor(a.getUTCMonth() / 3) * 3, 1), k]; } },
+  anio:          { t: 'Este año',        f: k => [Date.UTC(new Date(k).getUTCFullYear(), 0, 1), k] },
+};
+const RAPIDOS = ['todo', '7', '30', 'mes', 'mes_pasado', '90'];
+const MAS = ['hoy', 'ayer', 'semana', 'semana_pasada', '14', 'trimestre', 'anio'];
+function limites() {
+  const r = S.rango;
+  if (r.p === 'custom') {
+    let lo = kDeFecha(r.d), hi = kDeFecha(r.h);
+    if (lo != null && hi != null && lo > hi) [lo, hi] = [hi, lo];
+    return { lo: lo ?? -Infinity, hi: hi ?? Infinity };
+  }
+  const m = /^m:(\d{4}-\d{2})$/.exec(r.p);
+  if (m) { const k = kDeFecha(m[1] + '-01'); return { lo: k, hi: finMesK(k) }; }
+  const pr = PRESETS[r.p];
+  if (pr && pr.f) { const [lo, hi] = pr.f(hoyK()); return { lo, hi }; }
+  return { lo: -Infinity, hi: Infinity };
+}
+const enRango = (k, L) => k >= L.lo && k <= L.hi;
+// Límites concretos (para mostrar y para las gráficas): lo abierto se cierra con los datos y hoy.
+const bordes = L => ({ lo: Number.isFinite(L.lo) ? L.lo : S.ext.lo, hi: Number.isFinite(L.hi) ? L.hi : Math.max(S.ext.hi, hoyK()) });
+function nombreRango() {
+  const r = S.rango;
+  if (r.p === 'custom') return 'Personalizado';
+  const m = /^m:(\d{4})-(\d{2})$/.exec(r.p);
+  if (m) return `${MESES_L[+m[2] - 1]} ${m[1]}`;
+  return (PRESETS[r.p] || PRESETS.todo).t;
+}
+// Agrupación de las gráficas: la que eligió la persona o, si no, según el largo del periodo.
+function agrupacion(L) {
+  const a = S.q.get('a');
+  if (a === 'dia' || a === 'semana' || a === 'mes') return a;
+  const b = bordes(L); const dias = (Math.min(b.hi, hoyK()) - b.lo) / DIA + 1;
+  return dias <= 31 ? 'dia' : dias <= 200 ? 'semana' : 'mes';
+}
+
+/* ---------- Rutas (el hash guarda vista y filtros) ---------- */
+function leerRuta() {
+  const [p, qs] = location.hash.replace(/^#/, '').split('?');
+  S.path = p || '/'; S.q = new URLSearchParams(qs || '');
+  const r = S.q.get('r') || 'todo';
+  const valido = r === 'custom' || Object.hasOwn(PRESETS, r) || /^m:\d{4}-\d{2}$/.test(r);
+  S.rango = valido ? { p: r, d: S.q.get('d') || '', h: S.q.get('h') || '' } : { p: 'todo', d: '', h: '' };
+}
+// Enlace a otra vista conservando solo el periodo.
+function enlace(path, extra = {}) {
+  const q = new URLSearchParams();
+  for (const k of ['r', 'd', 'h']) if (S.q.get(k)) q.set(k, S.q.get(k));
+  for (const [k, v] of Object.entries(extra)) if (v != null && v !== '') q.set(k, String(v));
+  const t = q.toString(); return '#' + path + (t ? '?' + t : '');
+}
+// Enlace a esta misma vista con algunos filtros cambiados.
+function aqui(cambios = {}) {
+  const q = new URLSearchParams(S.q); q.delete('ir');
+  for (const [k, v] of Object.entries(cambios)) { if (v == null || v === '') q.delete(k); else q.set(k, String(v)); }
+  const t = q.toString(); return '#' + S.path + (t ? '?' + t : '');
+}
+// Cambia filtros sin perder la posición en la página.
+function cambiar(cambios) { history.replaceState(null, '', aqui(cambios)); ruta(false); }
+function fijarRango(r) {
+  for (const k in S.lista) S.lista[k].n = 25;
+  cambiar({ r: r.p === 'todo' ? null : r.p, d: r.p === 'custom' ? r.d : null, h: r.p === 'custom' ? r.h : null, a: null });
+}
+const hashRango = (lo, hi) => aqui({ r: 'custom', d: fechaDeK(lo), h: fechaDeK(hi), a: null });
+const vistaActual = () => { const v = S.q.get('v'); return VISTAS.some(x => x[0] === v) ? v : 'resolver'; };
+
+addEventListener('hashchange', () => ruta(true));
+function ruta(arriba = true) {
+  ocultarTip();
+  const dlg = $('#drawer'); if (dlg.open) dlg.close();
+  leerRuta(); actualizarBarra();
+  if (S.path === '/meta') vistaConciliacion();
+  else if (S.path === '/leads') vistaLeads();
+  else {
+    const m = S.path.match(/^\/p\/([\w-]+)/);
+    const i = m ? S.data.proveedores.findIndex(p => p.id === m[1]) : -1;
+    if (i >= 0) vistaProveedor(i); else vistaInicio();
+  }
+  const ir = S.q.get('ir');
+  if (ir) {
+    history.replaceState(null, '', aqui());
+    const el = document.getElementById(ir);
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ block: 'start' }));
+  } else if (arriba) scrollTo({ top: 0 });
 }
 
 /* ---------- Descifrado ---------- */
@@ -359,22 +590,79 @@ function entrar() {
   document.title = `${S.data.titulo} · ${S.data.cliente}`;
   $('#eyebrow').textContent = `${S.data.cliente} · Pauta → HubSpot`;
   $('#h1').textContent = S.data.titulo;
-  pintarMeta(); ruta();
+  construirBarra(); pintarMeta(); ruta();
 }
 
 function indexar() {
   const d = S.data;
   d.porProv = d.proveedores.map(() => []);
-  for (const l of d.leads) d.porProv[l.p]?.push(l);
+  let lo = Infinity, hi = -Infinity;
+  for (const l of d.leads) { l.k = claveDia(l.t); d.porProv[l.p]?.push(l); if (l.k < lo) lo = l.k; if (l.k > hi) hi = l.k; }
+  if (!Number.isFinite(lo)) lo = hi = hoyK();
+  S.ext = { lo, hi };
+  const meses = [];
+  for (let m = mesK(lo); m <= mesK(Math.max(hi, hoyK())); m = finMesK(m) + DIA) meses.push(m);
+  S.meses = meses.slice(-6);
 }
 function pintarMeta() {
   const d = S.data, r = d.reglas;
-  const m = $('#meta'); m.replaceChildren(
+  $('#meta').replaceChildren(
     h('span', null, 'Actualizado: ', h('b', null, fDiaHora(Date.parse(d.generadoEn)))),
     h('span', null, 'Negocio a tiempo: ', h('b', null, `≤ ${r.ventanaNegocioHoras} h`)),
     h('span', null, 'Contacto desfasado: ', h('b', null, `> ${r.desfaseMin} min`)),
   );
   $('#foot').textContent = 'Los datos se leen de Meta, de las bases de cada proveedor y de HubSpot en modo de solo lectura. El reporte se actualiza solo cada hora.';
+}
+
+/* ---------- Barra de periodo (una sola para todo el reporte) ---------- */
+const B = {};
+function construirBarra() {
+  B.rapidos = RAPIDOS.map(k => h('button', { type: 'button', class: 'chip', onclick: () => fijarRango({ p: k }) }, PRESETS[k].t));
+  B.mas = h('select', { class: 'sel-mas', 'aria-label': 'Más periodos', onchange: e => { if (e.target.value) fijarRango({ p: e.target.value }); } },
+    h('option', { value: '' }, 'Más periodos…'), MAS.map(k => h('option', { value: k }, PRESETS[k].t)));
+  B.meses = h('div', { class: 'meses', role: 'group', 'aria-label': 'Ver un mes' });
+  B.desde = h('input', { type: 'date', id: 'r-desde' });
+  B.hasta = h('input', { type: 'date', id: 'r-hasta' });
+  const valida = x => { const k = kDeFecha(x); if (k == null) return false; const y = new Date(k).getUTCFullYear(); return y >= 2020 && y <= 2100; };
+  const alCambiar = () => {
+    clearTimeout(B.t);
+    B.t = setTimeout(() => {
+      const d = B.desde.value, hh = B.hasta.value;
+      if ((d && !valida(d)) || (hh && !valida(hh)) || (!d && !hh)) return;
+      fijarRango({ p: 'custom', d, h: hh });
+    }, 400);
+  };
+  for (const inp of [B.desde, B.hasta]) { inp.addEventListener('change', alCambiar); inp.addEventListener('keydown', e => { if (e.key === 'Enter') { clearTimeout(B.t); alCambiar(); } }); }
+  B.txt = h('p', { class: 'rango-txt', 'aria-live': 'polite' });
+  B.quitar = h('button', { type: 'button', class: 'btn sm', onclick: () => fijarRango({ p: 'todo' }) }, cruz(), 'Quitar filtro de fechas');
+  $('#periodo').replaceChildren(
+    h('div', { class: 'row' }, h('span', { class: 'cap' }, 'Periodo'),
+      h('div', { class: 'row scroll chips', role: 'group', 'aria-label': 'Periodos rápidos', style: 'flex:1' }, B.rapidos, B.mas)),
+    h('div', { class: 'row split' },
+      h('div', { class: 'fechas' }, h('div', { class: 'fecha' }, h('label', { for: 'r-desde' }, 'Desde'), B.desde), h('div', { class: 'fecha' }, h('label', { for: 'r-hasta' }, 'Hasta'), B.hasta)),
+      B.meses),
+    h('div', { class: 'row split' }, B.txt, B.quitar));
+}
+function actualizarBarra() {
+  if (!B.txt) return;
+  const r = S.rango, L = limites(), b = bordes(L);
+  B.rapidos.forEach((el, i) => el.setAttribute('aria-pressed', String(r.p === RAPIDOS[i])));
+  B.mas.value = MAS.includes(r.p) ? r.p : '';
+  B.mas.classList.toggle('on', MAS.includes(r.p));
+  const multiAnio = S.meses.length && new Date(S.meses[0]).getUTCFullYear() !== new Date(S.meses[S.meses.length - 1]).getUTCFullYear();
+  B.meses.replaceChildren(h('span', { class: 'cap' }, 'Meses'), ...S.meses.map(m => {
+    const a = new Date(m), clave = `m:${fechaDeK(m).slice(0, 7)}`;
+    return h('button', { type: 'button', class: 'chip', 'aria-pressed': String(r.p === clave), onclick: () => fijarRango({ p: clave }) },
+      MESES_L[a.getUTCMonth()] + (multiAnio ? ` ${String(a.getUTCFullYear()).slice(2)}` : ''));
+  }));
+  const hoy = hoyK();
+  for (const [inp, k] of [[B.desde, b.lo], [B.hasta, Math.min(b.hi, Math.max(hoy, S.ext.hi))]]) {
+    if (document.activeElement !== inp) inp.value = fechaDeK(k);
+    inp.classList.toggle('on', r.p === 'custom');
+  }
+  const dias = Math.round((b.hi - b.lo) / DIA) + 1;
+  B.txt.replaceChildren('Estás viendo ', h('b', null, nombreRango()), `: del ${fK(b.lo)} al ${fK(b.hi)} (${fNum(dias)} día${dias === 1 ? '' : 's'}).`);
+  B.quitar.hidden = r.p === 'todo';
 }
 
 /* ---------- Agregados ---------- */
@@ -384,22 +672,40 @@ function contar(leads) {
   c.enHs = c.total - c.sin_contacto; c.porResolver = c.sin_contacto + c.sin_negocio;
   return c;
 }
-function barraEstatus(c, alto) {
-  const bar = h('div', { class: 'hbar', role: 'img', 'aria-label': ORDEN.map(k => `${EST[k].lbl}: ${c[k]}`).join(', '), style: alto ? `height:${alto}px` : '' });
+// Barra de estatus; cada tramo abre la lista de ese estatus si se pasa enlaceDe.
+function barraEstatus(c, enlaceDe) {
+  const bar = h('div', { class: 'hbar', role: enlaceDe ? null : 'img', 'aria-label': enlaceDe ? null : ORDEN.map(k => `${EST[k].lbl}: ${c[k]}`).join(', ') });
   for (const k of ORDEN) if (c[k]) {
-    const seg = h('span', { style: `flex:${c[k]};background:var(${EST[k].v})` });
-    seg.addEventListener('pointermove', ev => mostrarTip(ev.clientX, ev.clientY, EST[k].lbl, [[k, c[k], `${pct(c[k], c.total)} %`]]));
+    const seg = enlaceDe
+      ? h('a', { href: enlaceDe(k), style: `flex:${c[k]};background:var(${EST[k].v})`, 'aria-label': `${EST[k].lbl}: ${c[k]}. Ver la lista` })
+      : h('span', { style: `flex:${c[k]};background:var(${EST[k].v})` });
+    seg.addEventListener('pointermove', ev => mostrarTip(ev.clientX, ev.clientY, EST[k].lbl, [[k, c[k], `${pct(c[k], c.total)} %`]], enlaceDe ? 'Clic para ver la lista' : null));
     seg.addEventListener('pointerleave', ocultarTip);
     bar.append(seg);
   }
   return bar;
 }
+const nombrePrograma = g => (g >= 0 && g != null ? S.data.programas[g] : 'Sin programa identificado');
+function numLink(n, href, crit) { return n ? h('a', { class: 'nlink' + (crit ? ' crit' : ''), href }, fNum(n)) : h('span', { class: 'n0' }, '0'); }
+function tile(lbl, val, sub, unidad) {
+  return h('div', { class: 'tile' }, h('div', { class: 'n-lbl' }, lbl), h('div', { class: 'n-val' }, val, unidad ? h('small', null, unidad) : null), sub ? h('div', { class: 'n-sub' }, sub) : null);
+}
+function tileLink(lbl, val, sub, unidad, href, o = {}) {
+  return h('a', { class: 'tile' + (o.act ? ' act' : '') + (o.tono ? ' ' + o.tono : ''), href, 'aria-current': o.act ? 'true' : null },
+    h('div', { class: 'n-lbl' }, lbl), h('div', { class: 'n-val' }, val, unidad ? h('small', null, unidad) : null), sub ? h('div', { class: 'n-sub' }, sub) : null,
+    h('span', { class: 'ver' }, o.ver || 'Ver leads', flecha()));
+}
+function num(lbl, val, unidad) { return h('div', null, h('div', { class: 'n-lbl' }, lbl), h('div', { class: 'n-val' }, val, unidad ? h('small', null, unidad) : null)); }
+const volver = (txt, href) => h('a', { class: 'back', href }, atrasIc(), txt);
+// Pinta la vista; ignora las piezas vacías (null) para que no salgan como texto.
+const pintar = (...kids) => $('#view').replaceChildren(...kids.flat(Infinity).filter(x => x != null && x !== false));
 
 /* ---------- Tooltip ---------- */
 const tip = $('#tip');
-function mostrarTip(x, y, titulo, filas) {
+function mostrarTip(x, y, titulo, filas, pie) {
   tip.replaceChildren(h('div', { class: 'th' }, titulo), ...filas.map(([k, v, extra]) =>
-    h('div', { class: 'tr' }, h('i', { class: 'k', style: `background:var(${EST[k]?.v || '--ink-3'})` }), h('span', null, EST[k]?.lbl || k), h('b', null, fNum(v), extra ? h('span', { style: 'font-weight:400;margin-left:6px' }, extra) : null))));
+    h('div', { class: 'tr' }, h('i', { class: 'k', style: `background:var(${EST[k]?.v || '--ink-3'})` }), h('span', null, EST[k]?.lbl || k), h('b', null, fNum(v), extra ? h('span', { style: 'font-weight:400;margin-left:6px' }, extra) : null))),
+    ...(pie ? [h('div', { class: 'muted', style: 'font-size:12px;margin-top:6px' }, pie)] : []));
   tip.hidden = false;
   const w = tip.offsetWidth, hh = tip.offsetHeight;
   let left = x + 14, top = y + 14;
@@ -410,57 +716,50 @@ function mostrarTip(x, y, titulo, filas) {
 function ocultarTip() { tip.hidden = true; }
 addEventListener('scroll', ocultarTip, { passive: true });
 
-/* ---------- Rutas ---------- */
-addEventListener('hashchange', ruta);
-function ruta() {
-  ocultarTip();
-  if (/^#\/meta\b/.test(location.hash)) { vistaConciliacion(); scrollTo({ top: 0 }); return; }
-  const m = location.hash.match(/^#\/p\/([\w-]+)/);
-  const i = m ? S.data.proveedores.findIndex(p => p.id === m[1]) : -1;
-  if (i >= 0) vistaProveedor(i); else vistaInicio();
-  scrollTo({ top: 0 });
-}
-
 /* ---------- Portada ---------- */
 function vistaInicio() {
-  const d = S.data, v = $('#view');
-  const todos = contar(d.leads);
+  const d = S.data, L = limites();
+  const c = contar(d.leads.filter(l => enRango(l.k, L)));
   const conBase = d.proveedores.filter(p => p.estado === 'ok').length;
-  const cards = d.proveedores.map((p, i) => tarjetaProveedor(p, i));
-  v.replaceChildren(
-    h('p', { class: 'sub', style: 'max-width:72ch;margin-bottom:20px' },
-      `Aquí ves, por proveedor de pauta, cuántos de sus leads ya están en HubSpot como contacto y cuántos tienen su negocio. ` +
-      `Para ver el detalle de un proveedor —por fecha, por programa y la lista de pendientes— das clic en su tarjeta.`),
+  pintar(
+    h('p', { class: 'sub intro' },
+      'Aquí ves, por proveedor de pauta, cuántos de sus leads ya están en HubSpot como contacto y cuántos tienen su negocio. ' +
+      'Cada tarjeta y cada número se pueden abrir: das clic y te lleva a la lista de esos leads.'),
     h('div', { class: 'tiles t4' },
-      tile('Leads en las bases', fNum(todos.total), `${conBase} de ${d.proveedores.length} proveedores con base conectada`),
-      tile('Ya están en HubSpot', `${pct(todos.enHs, todos.total)}`, `${fNum(todos.enHs)} con contacto`, '%'),
-      tile('Con negocio a tiempo', `${pct(todos.completo, todos.total)}`, `${fNum(todos.completo)} en ≤ ${d.reglas.ventanaNegocioHoras} h`, '%'),
-      tile('Por resolver', fNum(todos.porResolver), `${fNum(todos.sin_negocio)} sin negocio · ${fNum(todos.sin_contacto)} sin contacto`)),
-    tarjetaConciliacion(),
-    h('div', { class: 'grid-prov' }, cards),
+      tileLink('Leads en las bases', fNum(c.total), `${conBase} de ${d.proveedores.length} proveedores con base conectada`, null, enlace('/leads', { v: 'todos', ir: 'lista' }), { ver: 'Ver todos' }),
+      tileLink('Ya están en HubSpot', pct(c.enHs, c.total), `${fNum(c.enHs)} con contacto`, '%', enlace('/leads', { v: 'enhs', ir: 'lista' })),
+      tileLink('Con negocio a tiempo', pct(c.completo, c.total), `${fNum(c.completo)} en ≤ ${d.reglas.ventanaNegocioHoras} h`, '%', enlace('/leads', { v: 'completo', ir: 'lista' })),
+      tileLink('Por resolver', fNum(c.porResolver), `${fNum(c.sin_negocio)} sin negocio · ${fNum(c.sin_contacto)} sin contacto`, null, enlace('/leads', { v: 'resolver', ir: 'lista' }), { tono: c.porResolver ? 'alerta' : '', ver: c.porResolver ? 'Ver los pendientes' : 'Ver leads' })),
+    tarjetaConciliacion(L),
+    h('div', { class: 'sec-row' }, h('h2', null, 'Por proveedor'), h('a', { class: 'btn go sm', href: enlace('/leads') }, 'Ver todos los leads juntos', flecha())),
+    h('div', { class: 'grid-prov' }, d.proveedores.map((p, i) => tarjetaProveedor(p, i, L))),
     comoSeLee());
 }
-function tile(lbl, val, sub, unidad) {
-  return h('div', { class: 'tile' }, h('div', { class: 'n-lbl' }, lbl), h('div', { class: 'n-val' }, val, unidad ? h('small', null, unidad) : null), sub ? h('div', { class: 'n-sub' }, sub) : null);
-}
-function tarjetaProveedor(p, i) {
-  const leads = S.data.porProv[i];
+function tarjetaProveedor(p, i, L) {
   if (p.estado !== 'ok') {
     const txt = p.estado === 'error'
       ? (/GOOGLE_SA_JSON|403|PERMISSION|permission/i.test(p.detalle) ? 'Estamos terminando de conectar su base. En cuanto quede, sus leads aparecen aquí solos.' : 'No se pudo leer su base en la última actualización.')
       : (p.detalle || 'Aún no hay una base conectada para este proveedor.');
     return h('div', { class: 'prov off' }, h('div', { class: 'prov-head' }, h('h2', null, p.nombre), h('span', { class: 'muted', style: 'font-size:13px' }, p.estado === 'error' ? 'Pendiente de conexión' : 'Sin base')), h('p', { class: 'sub', style: 'font-size:14px' }, txt));
   }
+  const todos = S.data.porProv[i];
+  const leads = todos.filter(l => enRango(l.k, L));
   const c = contar(leads);
-  const ultimo = leads.length ? leads[leads.length - 1].t : null;
-  return h('a', { class: 'prov', href: `#/p/${p.id}` },
-    h('div', { class: 'prov-head' }, h('h2', null, p.nombre), h('span', { class: 'go' }, 'Ver reporte →')),
-    h('div', { class: 'prov-nums' },
-      num('Leads', fNum(c.total)), num('En HubSpot', pct(c.enHs, c.total), '%'), num('Negocio a tiempo', pct(c.completo, c.total), '%'), num('Por resolver', fNum(c.porResolver))),
-    barraEstatus(c),
-    h('div', { class: 'meta-line' }, ultimo ? h('span', null, 'Último lead: ', h('b', null, fDia(ultimo))) : null, c.desfasado ? h('span', null, 'Contactos desfasados: ', h('b', null, fNum(c.desfasado))) : null));
+  const ir = extra => enlace(`/p/${p.id}`, extra);
+  const ultimo = todos.length ? todos[todos.length - 1].t : null;
+  return h('div', { class: 'prov' },
+    h('div', { class: 'prov-head' }, h('h2', null, h('a', { href: ir() }, p.nombre)), h('a', { class: 'btn go sm', href: ir() }, 'Ver reporte', flecha())),
+    c.total ? [
+      h('div', { class: 'prov-nums' },
+        num('Leads', fNum(c.total)), num('En HubSpot', pct(c.enHs, c.total), '%'), num('Negocio a tiempo', pct(c.completo, c.total), '%'), num('Por resolver', fNum(c.porResolver))),
+      barraEstatus(c, k => ir({ v: k, ir: 'lista' })),
+      h('div', { class: 'stchips' }, ORDEN.filter(k => c[k]).map(k =>
+        h('a', { class: 'stchip', href: ir({ v: k, ir: 'lista' }), title: `Ver los leads con estatus “${EST[k].lbl}”` }, h('i', { style: `background:var(${EST[k].v})` }), EST[k].corto, h('b', null, fNum(c[k]))))),
+    ] : h('p', { class: 'muted', style: 'font-size:14px' }, 'Sin leads en este periodo.'),
+    h('div', { class: 'prov-foot' },
+      h('div', { class: 'meta-line' }, ultimo ? h('span', null, 'Último lead: ', h('b', null, fDia(ultimo))) : null, c.desfasado ? h('span', null, 'Contactos desfasados: ', h('b', null, fNum(c.desfasado))) : null),
+      c.porResolver ? h('a', { class: 'btn warn sm', href: ir({ v: 'resolver', ir: 'lista' }) }, `Ver ${fNum(c.porResolver)} por resolver`, flecha()) : null));
 }
-function num(lbl, val, unidad) { return h('div', null, h('div', { class: 'n-lbl' }, lbl), h('div', { class: 'n-val' }, val, unidad ? h('small', null, unidad) : null)); }
 
 function comoSeLee() {
   const r = S.data.reglas;
@@ -476,249 +775,150 @@ function comoSeLee() {
       h('dt', null, h('span', { class: 'flag' }, 'Desfasado')), h('dd', null, `El contacto se creó en HubSpot más de ${r.desfaseMin} min después del lead (por ejemplo, porque entró por una importación y no por la sincronización).`)));
 }
 
-/* ---------- Meta → HubSpot (conciliación) ---------- */
-const PG_EST = {
-  ok:         { lbl: 'Conectada',         v: '--st-good' },
-  sin_acceso: { lbl: 'Acceso pendiente',  v: '--st-neutral' },
-  error:      { lbl: 'Sin lectura en esta actualización', v: '--st-critical' },
-};
-function pillPagina(estado) {
-  const e = PG_EST[estado] || PG_EST.error;
-  return h('span', { class: 'pill' }, h('i', { style: `background:var(${e.v})`, 'aria-hidden': 'true' }), e.lbl);
+/* ---------- Filtros de las vistas de detalle ---------- */
+function selectorPrograma(leads) {
+  const g = S.q.get('g') ?? '';
+  const progs = new Map(); for (const l of leads) progs.set(l.g, (progs.get(l.g) || 0) + 1);
+  if (g !== '' && !progs.has(Number(g))) progs.set(Number(g), 0);
+  return h('div', { class: 'f' }, h('label', { for: 'f-prog' }, 'Programa'),
+    h('select', { id: 'f-prog', onchange: e => cambiar({ g: e.target.value }) },
+      h('option', { value: '' }, `Todos los programas (${fNum(leads.length)})`),
+      [...progs.entries()].sort((a, b) => b[1] - a[1]).map(([gg, n]) => h('option', { value: String(gg), selected: String(gg) === g }, `${nombrePrograma(gg)} (${fNum(n)})`))));
 }
-// Porcentaje para la conciliación: con un decimal y sin redondear a 100 % si falta alguno.
-function pctC(a, b) { if (!b) return '0'; if (a >= b) return '100'; const x = Math.floor((a / b) * 1000) / 10; return x.toLocaleString('es-MX', { maximumFractionDigits: 1 }); }
-function nombreProv(id) { return (S.data.proveedores.find(p => p.id === id) || {}).nombre || '—'; }
-function veredicto(t) {
-  if (!t.meta) return { ok: true, txt: 'En este periodo no hay leads de Meta en las páginas conectadas.' };
-  if (!t.faltan) return { ok: true, txt: `Sí. Los ${fNum(t.meta)} leads que Meta registró en este periodo están en HubSpot.` };
-  return { ok: false, txt: `Llegaron ${fNum(t.coinciden)} de ${fNum(t.meta)} (${pctC(t.coinciden, t.meta)} %). ${t.faltan === 1 ? 'Falta 1 lead' : `Faltan ${fNum(t.faltan)} leads`} por llegar a HubSpot.` };
+function selectorProveedor(leads) {
+  const d = S.data, pv = S.q.get('pv') || '';
+  const n = d.proveedores.map(() => 0); for (const l of leads) n[l.p]++;
+  return h('div', { class: 'f' }, h('label', { for: 'f-prov' }, 'Proveedor'),
+    h('select', { id: 'f-prov', onchange: e => cambiar({ pv: e.target.value, g: null }) },
+      h('option', { value: '' }, `Todos los proveedores (${fNum(leads.length)})`),
+      d.proveedores.map((p, i) => p.estado === 'ok' ? h('option', { value: p.id, selected: p.id === pv }, `${p.nombre} (${fNum(n[i])})`) : null)));
 }
-function lineaVeredicto(t) {
-  const v = veredicto(t);
-  return h('div', { class: 'verdict' + (v.ok ? ' ok' : ' warn') },
-    h('span', { class: 'ico', 'aria-hidden': 'true' }, v.ok ? '✓' : '!'), h('p', null, v.txt));
+function selectorAgrupar(agr) {
+  return h('div', { class: 'f' }, h('span', { class: 'lbl' }, 'Agrupar la gráfica por'),
+    h('div', { class: 'seg', role: 'group', 'aria-label': 'Agrupar la gráfica por' },
+      [['dia', 'Día'], ['semana', 'Semana'], ['mes', 'Mes']].map(([val, t]) => h('button', { type: 'button', 'aria-pressed': String(agr === val), onclick: () => cambiar({ a: val }) }, t))));
 }
-function periodoConc(c) { return `del ${fDia(c.desde)} al ${fDia(c.hasta)}`; }
-
-function tarjetaConciliacion() {
-  const c = S.data.conciliacion;
-  if (!c) return null;
-  const card = h('section', { class: 'card cmp' });
-  card.append(h('div', { class: 'cmp-head' },
-    h('div', { class: 'sec-head', style: 'margin-bottom:0' },
-      h('div', { class: 'eyebrow' }, 'Meta → HubSpot'),
-      h('h2', null, '¿Llegan a HubSpot todos los leads de Meta?')),
-    c.error ? null : h('a', { class: 'go', href: '#/meta' }, 'Ver la comparación →')));
-  if (c.error) {
-    card.append(h('p', { class: 'sub', style: 'margin-top:10px' }, 'En esta actualización no se pudo leer Meta. Se vuelve a intentar sola en la siguiente actualización.'));
-    return card;
-  }
-  const t = c.total, conectadas = c.paginas.filter(p => p.estado === 'ok').length;
-  card.append(
-    h('p', { class: 'sub', style: 'margin:8px 0 14px;max-width:72ch;font-size:14px' },
-      `Comparamos, uno por uno, los leads que Meta registró en los formularios de las páginas conectadas contra lo que llegó a HubSpot, ${periodoConc(c)} (Meta conserva los leads de los últimos 90 días).`),
-    lineaVeredicto(t),
-    h('div', { class: 'prov-nums', style: 'margin:16px 0 14px' },
-      num('Leads en Meta', fNum(t.meta)), num('Llegaron a HubSpot', pctC(t.coinciden, t.meta), '%'), num('No llegaron', fNum(t.faltan)), num('Páginas conectadas', `${conectadas}`, `de ${c.paginas.length}`)),
-    h('div', { class: 'pills' }, c.paginas.map(p => h('span', { class: 'pg' }, h('b', null, p.nombre || p.id), pillPagina(p.estado)))));
-  return card;
+// Chips con los filtros activos (programa, proveedor), cada uno con su ✕.
+function filtrosActivos() {
+  const d = S.data, chips = [];
+  const g = S.q.get('g'), pv = S.q.get('pv');
+  if (pv) { const p = d.proveedores.find(x => x.id === pv); if (p) chips.push(h('span', { class: 'fchip' }, 'Proveedor: ', h('b', null, p.nombre), h('a', { href: aqui({ pv: null }), 'aria-label': 'Quitar el filtro de proveedor' }, cruz()))); }
+  if (g != null && g !== '') chips.push(h('span', { class: 'fchip' }, 'Programa: ', h('b', null, nombrePrograma(Number(g))), h('a', { href: aqui({ g: null }), 'aria-label': 'Quitar el filtro de programa' }, cruz())));
+  return chips.length ? h('div', { class: 'activos' }, chips) : null;
 }
-
-function claveASemana(k) {
-  const [y, m, d] = k.split('-').map(Number); const u = Date.UTC(y, m - 1, d);
-  return u - ((new Date(u).getUTCDay() + 6) % 7) * 864e5;
-}
-function barraConc(llegaron, faltan) {
-  const bar = h('div', { class: 'hbar', role: 'img', 'aria-label': `Llegaron ${llegaron}, no llegaron ${faltan}`, style: 'height:8px;min-width:90px' });
-  if (llegaron) bar.append(h('span', { style: `flex:${llegaron};background:var(--st-good)` }));
-  if (faltan) bar.append(h('span', { style: `flex:${faltan};background:var(--st-critical)` }));
-  return bar;
-}
-
-function vistaConciliacion() {
-  const d = S.data, c = d.conciliacion, v = $('#view');
-  const atras = h('a', { class: 'back', href: '#/' }, '← Inicio');
-  if (!c || c.error) {
-    v.replaceChildren(atras, h('section', { class: 'card' }, h('h2', null, 'Meta → HubSpot'),
-      h('p', { class: 'sub', style: 'margin-top:6px' }, c ? 'En esta actualización no se pudo leer Meta. Se vuelve a intentar sola en la siguiente actualización.' : 'La comparación con Meta todavía no está configurada.')));
-    return;
-  }
-  const t = c.total;
-  const pagNom = i => c.paginas[i]?.nombre || c.paginas[i]?.id || '';
-
-  // Por página
-  const tPag = h('section', { class: 'card' },
-    h('div', { class: 'sec-head' }, h('h2', null, 'Por página de Facebook'),
-      h('p', null, 'Las páginas con acceso pendiente se suman aquí solas en cuanto quede su acceso.')),
-    h('div', { class: 'tscroll' }, h('table', null,
-      h('thead', null, h('tr', null, h('th', null, 'Página'), h('th', null, 'Estado'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron a HubSpot'), h('th', { class: 'num' }, 'No llegaron'), h('th', null, ''))),
-      h('tbody', null, c.paginas.map(p => h('tr', null,
-        h('td', null, p.nombre || p.id), h('td', null, pillPagina(p.estado)),
-        h('td', { class: 'num' }, p.estado === 'ok' ? fNum(p.meta) : '—'),
-        h('td', { class: 'num' }, p.estado === 'ok' ? `${fNum(p.coinciden)}${p.meta ? ` (${pctC(p.coinciden, p.meta)} %)` : ''}` : '—'),
-        h('td', { class: 'num' }, p.estado === 'ok' ? fNum(p.faltan) : '—'),
-        h('td', null, p.estado === 'ok' && p.meta ? barraConc(p.coinciden, p.faltan) : null)))),
-      h('tfoot', null, h('tr', null, h('td', null, 'Total'), h('td', null, ''), h('td', { class: 'num' }, fNum(t.meta)), h('td', { class: 'num' }, `${fNum(t.coinciden)}${t.meta ? ` (${pctC(t.coinciden, t.meta)} %)` : ''}`), h('td', { class: 'num' }, fNum(t.faltan)), h('td', null, ''))))));
-
-  // Semana a semana
-  const sem = new Map();
-  for (const [k, [m, ok]] of Object.entries(c.dias || {})) { const u = claveASemana(k); const x = sem.get(u) || [0, 0]; x[0] += m; x[1] += ok; sem.set(u, x); }
-  const semanas = [...sem.entries()].sort((a, b) => b[0] - a[0]);
-  const tSem = h('section', { class: 'card' },
-    h('div', { class: 'sec-head' }, h('h2', null, 'Semana a semana'), h('p', null, 'Leads que Meta registró cada semana y cuántos de ellos están en HubSpot.')),
-    semanas.length ? h('div', { class: 'tscroll' }, h('table', null,
-      h('thead', null, h('tr', null, h('th', null, 'Semana'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron a HubSpot'), h('th', { class: 'num' }, 'No llegaron'), h('th', null, ''))),
-      h('tbody', null, semanas.map(([u, [m, ok]]) => h('tr', null, h('td', null, etiquetaPeriodo(u, 'semana')), h('td', { class: 'num' }, fNum(m)), h('td', { class: 'num' }, fNum(ok)), h('td', { class: 'num' }, fNum(m - ok)), h('td', null, barraConc(ok, m - ok)))))))
-      : h('p', { class: 'empty' }, 'No hay leads en este periodo.'));
-
-  // Por formulario
-  const forms = c.formularios.filter(f => f.meta || f.soloHs);
-  const tForm = h('section', { class: 'card' },
-    h('div', { class: 'sec-head' }, h('h2', null, 'Por formulario'), h('p', null, 'Cada formulario de Meta con leads en el periodo y su agencia.')),
-    forms.length ? h('div', { class: 'tscroll' }, h('table', null,
-      h('thead', null, h('tr', null, h('th', null, 'Formulario'), h('th', null, 'Página'), h('th', null, 'Agencia'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron'), h('th', { class: 'num' }, 'No llegaron'), h('th', { class: 'num' }, 'Solo en HubSpot'))),
-      h('tbody', null, forms.slice().sort((a, b) => b.meta - a.meta).map(f => h('tr', null,
-        h('td', { style: 'min-width:240px' }, f.n), h('td', null, pagNom(f.pg)), h('td', null, f.prov ? nombreProv(f.prov) : '—'),
-        h('td', { class: 'num' }, fNum(f.meta)), h('td', { class: 'num' }, fNum(f.coinciden)), h('td', { class: 'num' }, fNum(f.faltan)), h('td', { class: 'num' }, fNum(f.soloHs)))))))
-      : h('p', { class: 'empty' }, 'No hay formularios con leads en este periodo.'));
-
-  // Lista de los que no llegaron
-  const tFalt = h('section', { class: 'card' },
-    h('div', { class: 'sec-head' }, h('h2', null, 'Leads que no llegaron a HubSpot'),
-      h('p', null, t.faltan ? 'Estos leads están en Meta y no aparecen en HubSpot. Para revisarlos con calma, puedes descargarlos en CSV.' : 'Aquí aparecerían, uno por uno, los leads de Meta que no estén en HubSpot.')));
-  if (!c.faltantes.length) tFalt.append(h('p', { class: 'empty' }, 'No hay. Todos los leads de Meta de este periodo están en HubSpot.'));
-  else {
-    tFalt.append(h('div', { class: 'list-tools' }, h('span', { class: 'muted', style: 'font-size:13px' }, `${fNum(c.faltantes.length)} lead${c.faltantes.length === 1 ? '' : 's'}${c.faltantesRecortados ? ' (se muestran los más recientes)' : ''}`),
-      h('button', { class: 'btn', type: 'button', onclick: () => exportarFaltantes(c) }, 'Descargar CSV')));
-    tFalt.append(h('div', { class: 'tscroll' }, h('table', null,
-      h('thead', null, h('tr', null, h('th', null, 'Fecha del lead'), h('th', null, 'Persona'), h('th', null, 'Formulario'), h('th', null, 'Página'))),
-      h('tbody', null, c.faltantes.slice(0, 200).map(l => h('tr', null,
-        h('td', { style: 'white-space:nowrap' }, fDiaHora(l.t)), h('td', { class: 'person' }, h('b', null, l.n || '—'), h('span', null, l.e || 'Sin correo')),
-        h('td', null, l.f), h('td', null, pagNom(l.pg))))))));
-  }
-
-  // Cómo se compara
-  const como = h('section', { class: 'card how' },
-    h('h2', null, 'Cómo se hace la comparación'),
-    h('dl', null,
-      h('dt', null, h('b', null, 'De dónde sale')), h('dd', null, 'Los leads se leen directo de Meta, de cada formulario de las páginas conectadas, en modo de solo lectura.'),
-      h('dt', null, h('b', null, 'Cómo se busca')), h('dd', null, 'Cada lead se busca en HubSpot entre los envíos de ese mismo formulario: primero por su correo y, si no aparece, por la hora exacta en que llegó.'),
-      h('dt', null, h('b', null, 'Periodo')), h('dd', null, `Meta guarda los leads de los últimos 90 días, por eso la comparación cubre ${periodoConc(c)}. Lo anterior se ve en la tarjeta de cada proveedor.`),
-      h('dt', null, h('b', null, 'Leads muy recientes')), h('dd', null, 'Los leads de la última media hora se comparan en la siguiente actualización, para darle tiempo a la sincronización.'),
-      h('dt', null, h('b', null, 'Solo en HubSpot')), h('dd', null, 'Envíos que están en HubSpot sin su par en Meta, por ejemplo cuando un mismo lead entró dos veces. No es un faltante.')));
-
-  v.replaceChildren(atras,
-    h('div', { style: 'display:grid;gap:6px;margin-bottom:18px' }, h('div', { class: 'eyebrow' }, 'Meta → HubSpot'), h('h2', { style: 'font-size:24px' }, '¿Llegan a HubSpot todos los leads de Meta?'),
-      h('div', { class: 'meta-line' }, h('span', null, 'Periodo: ', h('b', null, `${fDia(c.desde)} – ${fDia(c.hasta)}`)), h('span', null, 'Páginas conectadas: ', h('b', null, `${c.paginas.filter(p => p.estado === 'ok').length} de ${c.paginas.length}`)))),
-    h('div', { style: 'margin-bottom:18px' }, lineaVeredicto(t)),
-    h('div', { class: 'tiles t4' },
-      tile('Leads en Meta', fNum(t.meta), 'En las páginas conectadas'),
-      tile('Llegaron a HubSpot', pctC(t.coinciden, t.meta), `${fNum(t.coinciden)} de ${fNum(t.meta)}`, '%'),
-      tile('No llegaron', fNum(t.faltan), t.faltan ? 'Están en la lista de abajo' : 'Ninguno en el periodo'),
-      tile('Solo en HubSpot', fNum(t.soloHs), 'Sin su par en Meta (p. ej. duplicados)')),
-    tPag, tSem, tForm, tFalt, como);
-}
-function exportarFaltantes(c) {
-  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const lineas = [['Fecha del lead', 'Nombre', 'Correo', 'Formulario', 'Página'].map(q).join(',')];
-  for (const l of c.faltantes) lineas.push([fDiaHora(l.t), l.n, l.e, l.f, c.paginas[l.pg]?.nombre || ''].map(q).join(','));
-  const blob = new Blob(['﻿' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
-  const a = h('a', { href: URL.createObjectURL(blob), download: `meta-no-llegaron-a-hubspot-${new Date().toISOString().slice(0, 10)}.csv` });
-  document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+function tilesDetalle(c) {
+  const vista = vistaActual(), r = S.data.reglas;
+  const t = (k, lbl, val, sub, unidad, tono) => tileLink(lbl, val, sub, unidad, aqui({ v: k, ir: 'lista' }), { act: vista === k, tono });
+  return h('div', { class: 'tiles' },
+    t('todos', 'Leads', fNum(c.total), 'En el periodo y filtros elegidos'),
+    t('enhs', 'Ya están en HubSpot', pct(c.enHs, c.total), `${fNum(c.enHs)} de ${fNum(c.total)} con contacto`, '%'),
+    t('completo', 'Negocio a tiempo', pct(c.completo, c.total), `${fNum(c.completo)} en ≤ ${r.ventanaNegocioHoras} h · ${fNum(c.tardio)} tardíos`, '%'),
+    t('resolver', 'Por resolver', fNum(c.porResolver), `${fNum(c.sin_negocio)} sin negocio · ${fNum(c.sin_contacto)} sin contacto`, null, c.porResolver ? 'alerta' : ''),
+    t('desfasado', 'Contactos desfasados', fNum(c.desfasado), `Creados > ${r.desfaseMin} min después del lead`));
 }
 
 /* ---------- Detalle del proveedor ---------- */
-function filtrosDe(i) {
-  if (!S.filtros[i]) S.filtros[i] = { rango: 'todo', desde: '', hasta: '', agr: 'semana', prog: '' };
-  return S.filtros[i];
-}
-function aplicarFiltros(leads, f) {
-  let lo = -Infinity, hi = Infinity;
-  const hoy = claveDia(Date.now());
-  if (f.rango === '7' || f.rango === '30' || f.rango === '90') lo = hoy - (Number(f.rango) - 1) * 864e5;
-  if (f.rango === 'mes') lo = inicioMes(Date.now());
-  if (f.rango === 'custom') { if (f.desde) lo = Date.parse(f.desde + 'T00:00:00Z'); if (f.hasta) hi = Date.parse(f.hasta + 'T00:00:00Z'); }
-  return leads.filter(l => { const k = claveDia(l.t); return k >= lo && k <= hi && (!f.prog || String(l.g) === f.prog); });
-}
-
 function vistaProveedor(i) {
-  const d = S.data, p = d.proveedores[i], v = $('#view');
-  const base = d.porProv[i];
-  const f = filtrosDe(i);
+  const d = S.data, p = d.proveedores[i];
+  const atras = volver('Todos los proveedores', enlace('/'));
   if (p.estado !== 'ok') {
-    v.replaceChildren(h('a', { class: 'back', href: '#/' }, '← Todos los proveedores'), h('section', { class: 'card' }, h('h2', null, p.nombre), h('p', { class: 'sub', style: 'margin-top:6px' }, p.detalle || 'Aún no hay una base conectada.')));
+    pintar(atras, h('section', { class: 'card', style: 'margin-top:12px' }, h('h2', null, p.nombre), h('p', { class: 'sub', style: 'margin-top:6px' }, p.detalle || 'Aún no hay una base conectada.')));
     return;
   }
-  const leads = aplicarFiltros(base, f);
-  const c = contar(leads);
-
-  // Controles
-  const progs = new Map(); for (const l of base) progs.set(l.g, (progs.get(l.g) || 0) + 1);
-  const selProg = h('select', { id: 'f-prog', onchange: e => { f.prog = e.target.value; vistaProveedor(i); } },
-    h('option', { value: '' }, 'Todos los programas'),
-    [...progs.entries()].sort((a, b) => b[1] - a[1]).map(([g, n]) => h('option', { value: String(g), selected: String(g) === f.prog }, `${g >= 0 ? d.programas[g] : 'Sin programa identificado'} (${n})`)));
-  const selRango = h('select', { id: 'f-rango', onchange: e => { f.rango = e.target.value; vistaProveedor(i); } },
-    [['todo', 'Todo el periodo'], ['7', 'Últimos 7 días'], ['30', 'Últimos 30 días'], ['90', 'Últimos 90 días'], ['mes', 'Este mes'], ['custom', 'Personalizado']].map(([val, t]) => h('option', { value: val, selected: f.rango === val }, t)));
-  const custom = f.rango === 'custom' ? [
-    h('div', { class: 'f' }, h('label', { for: 'f-desde' }, 'Desde'), h('input', { id: 'f-desde', type: 'date', value: f.desde, onchange: e => { f.desde = e.target.value; vistaProveedor(i); } })),
-    h('div', { class: 'f' }, h('label', { for: 'f-hasta' }, 'Hasta'), h('input', { id: 'f-hasta', type: 'date', value: f.hasta, onchange: e => { f.hasta = e.target.value; vistaProveedor(i); } })),
-  ] : [];
-  const seg = h('div', { class: 'seg', role: 'group', 'aria-label': 'Agrupar por' },
-    [['semana', 'Semana'], ['mes', 'Mes']].map(([val, t]) => h('button', { type: 'button', 'aria-pressed': String(f.agr === val), onclick: () => { f.agr = val; vistaProveedor(i); } }, t)));
-
+  const L = limites(), base = d.porProv[i];
+  const enR = base.filter(l => enRango(l.k, L));
+  const g = S.q.get('g') ?? '';
+  const leads = g === '' ? enR : enR.filter(l => String(l.g) === g);
+  const c = contar(leads), agr = agrupacion(L);
   const TIPO_FUENTE = { sheet: 'Google Sheet', hubspot: 'HubSpot', meta: 'Meta', archivos: 'Archivos' };
   const fuente = p.fuente ? `${TIPO_FUENTE[p.fuente.tipo] || p.fuente.tipo}${p.fuente.titulo ? ` · ${p.fuente.titulo}` : ''}` : '';
-  v.replaceChildren(
-    h('a', { class: 'back', href: '#/' }, '← Todos los proveedores'),
-    h('div', { style: 'display:grid;gap:6px;margin-bottom:18px' }, h('h2', { style: 'font-size:24px' }, p.nombre),
+  pintar(
+    atras,
+    h('div', { style: 'display:grid;gap:6px;margin:14px 0 18px' }, h('h2', { style: 'font-size:24px' }, p.nombre),
       h('div', { class: 'meta-line' }, fuente ? h('span', null, 'Base: ', h('b', null, fuente)) : null, h('span', null, 'Leads en la base: ', h('b', null, fNum(base.length))), base.length ? h('span', null, 'Del ', h('b', null, fDia(base[0].t)), ' al ', h('b', null, fDia(base[base.length - 1].t))) : null)),
-    h('div', { class: 'filters' },
-      h('div', { class: 'f' }, h('label', { for: 'f-rango' }, 'Periodo'), selRango), ...custom,
-      h('div', { class: 'f' }, h('span', { class: 'lbl' }, 'Agrupar por'), seg),
-      h('div', { class: 'f' }, h('label', { for: 'f-prog' }, 'Programa'), selProg)),
-    h('div', { class: 'tiles' },
-      tile('Leads en la base', fNum(c.total), 'En el periodo y programa elegidos'),
-      tile('Ya están en HubSpot', pct(c.enHs, c.total), `${fNum(c.enHs)} de ${fNum(c.total)} con contacto`, '%'),
-      tile('Negocio a tiempo', pct(c.completo, c.total), `${fNum(c.completo)} en ≤ ${d.reglas.ventanaNegocioHoras} h · ${fNum(c.tardio)} tardíos`, '%'),
-      tile('Por resolver', fNum(c.porResolver), `${fNum(c.sin_negocio)} sin negocio · ${fNum(c.sin_contacto)} sin contacto`),
-      tile('Contactos desfasados', fNum(c.desfasado), `Creados > ${d.reglas.desfaseMin} min después del lead`)),
-    tarjetaGrafica(leads, f),
-    tarjetaProgramas(leads, f, i),
-    tarjetaLista(leads, i));
+    h('div', { class: 'filters' }, selectorPrograma(enR), selectorAgrupar(agr)),
+    filtrosActivos(),
+    tilesDetalle(c),
+    tarjetaGrafica(leads, agr, L),
+    tarjetaProgramas(enR),
+    tarjetaLista(leads, false));
+}
+
+/* ---------- Todos los leads (todos los proveedores) ---------- */
+function vistaLeads() {
+  const d = S.data, L = limites();
+  const pv = S.q.get('pv') || '', g = S.q.get('g') ?? '';
+  const ip = pv ? d.proveedores.findIndex(p => p.id === pv) : -1;
+  const enR = d.leads.filter(l => enRango(l.k, L));
+  const delProv = ip >= 0 ? enR.filter(l => l.p === ip) : enR;
+  const leads = g === '' ? delProv : delProv.filter(l => String(l.g) === g);
+  const agr = agrupacion(L);
+  pintar(
+    volver('Inicio', enlace('/')),
+    h('div', { style: 'display:grid;gap:6px;margin:14px 0 18px' }, h('h2', { style: 'font-size:24px' }, 'Todos los leads'),
+      h('p', { class: 'sub', style: 'max-width:72ch;font-size:14px' }, 'Los leads de todos los proveedores juntos. Para acotar, eliges proveedor o programa; cada número abre la lista de esos leads.')),
+    h('div', { class: 'filters' }, selectorProveedor(enR), selectorPrograma(delProv), selectorAgrupar(agr)),
+    filtrosActivos(),
+    tilesDetalle(contar(leads)),
+    tarjetaPorProveedor(g === '' ? enR : enR.filter(l => String(l.g) === g)),
+    tarjetaGrafica(leads, agr, L),
+    tarjetaProgramas(delProv),
+    tarjetaLista(leads, true));
+}
+function tarjetaPorProveedor(leads) {
+  const d = S.data, pv = S.q.get('pv') || '';
+  const por = d.proveedores.map(() => []); for (const l of leads) por[l.p]?.push(l);
+  const filas = d.proveedores.map((p, i) => ({ p, c: contar(por[i]) })).filter(r => r.p.estado === 'ok');
+  const tot = contar(leads);
+  const lk = (id, k, n) => numLink(n, aqui({ pv: id, v: k, ir: 'lista' }), k === 'sin_contacto' || k === 'sin_negocio');
+  return h('section', { class: 'card' },
+    h('div', { class: 'sec-head' }, h('h2', null, 'Por proveedor'), h('p', null, 'Cada número se puede abrir: das clic en él para ver esos leads en la lista de abajo.')),
+    h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, 'Proveedor'), h('th', { class: 'num' }, 'Leads'), h('th', { class: 'num' }, 'En HubSpot'), ORDEN.map(k => h('th', { class: 'num' }, EST[k].corto)), h('th', { class: 'num' }, 'Desfasados'), h('th', null, ''))),
+      h('tbody', null, filas.map(r => h('tr', { class: r.p.id === pv ? 'act' : null },
+        h('td', null, h('a', { class: 'plink', href: aqui({ pv: r.p.id === pv ? null : r.p.id, g: null }) }, r.p.nombre)),
+        h('td', { class: 'num' }, lk(r.p.id, 'todos', r.c.total)), h('td', { class: 'num' }, `${pct(r.c.enHs, r.c.total)} %`),
+        ORDEN.map(k => h('td', { class: 'num' }, lk(r.p.id, k, r.c[k]))), h('td', { class: 'num' }, lk(r.p.id, 'desfasado', r.c.desfasado)),
+        h('td', null, h('a', { class: 'btn go sm', href: enlace(`/p/${r.p.id}`) }, 'Reporte', flecha()))))),
+      h('tfoot', null, h('tr', null, h('td', null, 'Total'), h('td', { class: 'num' }, fNum(tot.total)), h('td', { class: 'num' }, `${pct(tot.enHs, tot.total)} %`), ORDEN.map(k => h('td', { class: 'num' }, fNum(tot[k]))), h('td', { class: 'num' }, fNum(tot.desfasado)), h('td', null, ''))))));
 }
 
 /* ---------- Gráfica por periodo (columnas apiladas por estatus) ---------- */
-function periodos(leads, agr) {
+function periodos(leads, agr, L) {
   if (!leads.length) return [];
-  const key = agr === 'mes' ? l => inicioMes(l.t) : l => inicioSemana(l.t);
-  const m = new Map(); for (const l of leads) { const k = key(l); if (!m.has(k)) m.set(k, []); m.get(k).push(l); }
-  const ks = [...m.keys()].sort((a, b) => a - b); const out = [];
-  for (let u = ks[0]; u <= ks[ks.length - 1]; u = siguiente(u, agr)) {
+  const m = new Map(); for (const l of leads) { const k = llaveDe(l.k, agr); if (!m.has(k)) m.set(k, []); m.get(k).push(l); }
+  const ks = [...m.keys()].sort((a, b) => a - b);
+  let ini = ks[0], fin = ks[ks.length - 1];
+  if (Number.isFinite(L.lo)) ini = Math.min(ini, llaveDe(L.lo, agr));
+  if (Number.isFinite(L.hi)) fin = Math.max(fin, llaveDe(Math.min(L.hi, hoyK()), agr));
+  const out = [];
+  for (let u = ini; u <= fin && out.length < 400; u = siguiente(u, agr)) {
     const a = new Date(u);
     const corto = agr === 'mes' ? `${MESES[a.getUTCMonth()]} ${String(a.getUTCFullYear()).slice(2)}` : `${a.getUTCDate()} ${MESES[a.getUTCMonth()]}`;
-    out.push({ u, lbl: etiquetaPeriodo(u, agr), corto, c: contar(m.get(u) || []) });
+    out.push({ u, lo: Math.max(u, L.lo), hi: Math.min(finPeriodo(u, agr), L.hi), lbl: etiquetaPeriodo(u, agr), corto, c: contar(m.get(u) || []) });
   }
   return out;
 }
-function tarjetaGrafica(leads, f) {
-  const ps = periodos(leads, f.agr);
+function tarjetaGrafica(leads, agr, L) {
+  const ps = periodos(leads, agr, L);
+  const nombre = { dia: 'Día a día', semana: 'Semana a semana', mes: 'Mes a mes' }[agr];
   const card = h('section', { class: 'card' },
-    h('div', { class: 'sec-head' }, h('h2', null, f.agr === 'mes' ? 'Mes a mes' : 'Semana a semana'),
-      h('p', null, 'Cada columna son los leads que llegaron en ese periodo, separados por lo que pasó con su contacto y su negocio en HubSpot.')));
+    h('div', { class: 'sec-head' }, h('h2', null, nombre),
+      h('p', null, 'Cada columna son los leads que llegaron en ese periodo, separados por lo que pasó con su contacto y su negocio en HubSpot. Para ver solo ese periodo, das clic en su columna.')));
   if (!ps.length) { card.append(h('p', { class: 'empty' }, 'No hay leads con estos filtros.')); return card; }
   card.append(h('div', { class: 'legend' }, ORDEN.map(k => badge(k))));
   const wrap = h('div', { class: 'chartwrap' }); card.append(wrap);
   let ancho = 0;
-  const dibujar = () => { const w = Math.max(300, wrap.clientWidth || 800); if (w === ancho) return; ancho = w; wrap.replaceChildren(svgColumnas(ps, w)); };
+  const dibujar = () => { const w = Math.max(300, wrap.clientWidth || 800); if (w === ancho) return; ancho = w; wrap.replaceChildren(svgColumnas(ps, w, agr)); };
   requestAnimationFrame(dibujar);
   if (S.ro) S.ro.disconnect();
   S.ro = new ResizeObserver(() => { clearTimeout(wrap._t); wrap._t = setTimeout(dibujar, 120); }); S.ro.observe(wrap);
-  // Tabla equivalente
+  // Tabla equivalente, con botón para ver cada periodo.
   card.append(h('details', { class: 'tbl' }, h('summary', null, 'Ver la tabla con los números'),
     h('div', { class: 'tscroll' }, h('table', null,
-      h('thead', null, h('tr', null, h('th', null, f.agr === 'mes' ? 'Mes' : 'Semana'), h('th', { class: 'num' }, 'Leads'), ORDEN.map(k => h('th', { class: 'num' }, EST[k].corto)), h('th', { class: 'num' }, 'Desfasados'))),
-      h('tbody', null, ps.map(pp => h('tr', null, h('td', null, pp.lbl), h('td', { class: 'num' }, fNum(pp.c.total)), ORDEN.map(k => h('td', { class: 'num' }, fNum(pp.c[k]))), h('td', { class: 'num' }, fNum(pp.c.desfasado)))))))));
+      h('thead', null, h('tr', null, h('th', null, { dia: 'Día', semana: 'Semana', mes: 'Mes' }[agr]), h('th', { class: 'num' }, 'Leads'), ORDEN.map(k => h('th', { class: 'num' }, EST[k].corto)), h('th', { class: 'num' }, 'Desfasados'), h('th', null, ''))),
+      h('tbody', null, ps.slice().reverse().map(pp => h('tr', null, h('td', null, pp.lbl), h('td', { class: 'num' }, fNum(pp.c.total)), ORDEN.map(k => h('td', { class: 'num' }, fNum(pp.c[k]))), h('td', { class: 'num' }, fNum(pp.c.desfasado)),
+        h('td', null, pp.c.total ? h('a', { class: 'btn go sm', href: hashRango(pp.lo, pp.hi) }, 'Ver', flecha()) : null))))))));
   return card;
 }
 function escala(max) {
@@ -727,19 +927,20 @@ function escala(max) {
   const paso = [1, 2, 2.5, 5, 10].map(x => x * mag).find(x => x >= bruto);
   return { top: Math.ceil(max / paso) * paso, paso };
 }
-function svgColumnas(ps, W) {
+function svgColumnas(ps, W, agr) {
   const H = 260, m = { l: 40, r: 8, t: 12, b: 30 };
   const iw = W - m.l - m.r, ih = H - m.t - m.b;
   const max = Math.max(1, ...ps.map(p => p.c.total));
   const { top, paso } = escala(max);
   const y = v => m.t + ih - (v / top) * ih;
-  const slot = iw / ps.length, bw = Math.min(24, Math.max(4, slot * 0.62));
-  const svg = s('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Leads por periodo y estatus' });
+  const slot = iw / ps.length, bw = Math.min(24, Math.max(3, slot * 0.62));
+  const svg = s('svg', { class: 'chart', viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': 'Leads por periodo y estatus' });
   for (let v = 0; v <= top; v += paso) {
     svg.append(s('line', { class: v === 0 ? 'base' : 'gridl', x1: m.l, x2: W - m.r, y1: y(v), y2: y(v) }));
     svg.append(s('text', { class: 'tick', x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end' }, fNum(v)));
   }
   const cada = Math.max(1, Math.ceil(ps.length / Math.max(1, Math.floor(iw / 64))));
+  const quien = { dia: 'este día', semana: 'esta semana', mes: 'este mes' }[agr];
   ps.forEach((p, i) => {
     const cx = m.l + slot * i + slot / 2, x = cx - bw / 2;
     const g = s('g', { class: 'col' });
@@ -757,45 +958,56 @@ function svgColumnas(ps, W) {
       g.append(s('path', { class: 'seg-r', d: path, style: `fill:var(${EST[k].v})` }));
     });
     if (i % cada === 0) svg.append(s('text', { class: 'tick', x: cx, y: H - 10, 'text-anchor': 'middle' }, p.corto));
-    const hit = s('rect', { class: 'col-hit', x: m.l + slot * i, y: m.t, width: slot, height: ih + 4, tabindex: 0, 'aria-label': `${p.lbl}: ${p.c.total} leads` });
-    const filas = () => [...ORDEN.map(k => [k, p.c[k]]).reverse(), ...(p.c.desfasado ? [['desf', p.c.desfasado]] : [])];
-    const mostrar = (cxp, cyp) => { g.classList.add('act'); mostrarTip(cxp, cyp, `${p.lbl} · ${fNum(p.c.total)} leads`, filas().map(([k, v]) => k === 'desf' ? ['Desfasados', v] : [k, v])); };
+    const hit = s('rect', { class: 'col-hit', x: m.l + slot * i, y: m.t, width: slot, height: ih + 4, tabindex: p.c.total ? 0 : -1, role: 'link', 'aria-label': `${p.lbl}: ${p.c.total} leads. Ver solo ${quien}` });
+    if (p.c.total) hit.style.cursor = 'pointer';
+    const filas = () => [...ORDEN.map(k => [k, p.c[k]]).reverse(), ...(p.c.desfasado ? [['Desfasados', p.c.desfasado]] : [])];
+    const mostrar = (cxp, cyp) => { g.classList.add('act'); mostrarTip(cxp, cyp, `${p.lbl} · ${fNum(p.c.total)} leads`, filas(), p.c.total ? `Clic para ver solo ${quien}` : null); };
+    const abrir = () => { if (p.c.total) location.hash = hashRango(p.lo, p.hi); };
     hit.addEventListener('pointermove', ev => mostrar(ev.clientX, ev.clientY));
     hit.addEventListener('pointerleave', () => { g.classList.remove('act'); ocultarTip(); });
     hit.addEventListener('focus', () => { const b = hit.getBoundingClientRect(); mostrar(b.left + b.width / 2, b.top + 20); });
     hit.addEventListener('blur', () => { g.classList.remove('act'); ocultarTip(); });
+    hit.addEventListener('click', abrir);
+    hit.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(); } });
     svg.append(g, hit);
   });
   return svg;
 }
 
 /* ---------- Tabla por programa ---------- */
-function tarjetaProgramas(leads, f, i) {
-  const d = S.data, m = new Map();
+function tarjetaProgramas(leads) {
+  const g = S.q.get('g') ?? '', m = new Map();
   for (const l of leads) { if (!m.has(l.g)) m.set(l.g, []); m.get(l.g).push(l); }
-  const filas = [...m.entries()].map(([g, ls]) => ({ g, c: contar(ls) })).sort((a, b) => b.c.total - a.c.total);
+  const filas = [...m.entries()].map(([gg, ls]) => ({ g: gg, c: contar(ls) })).sort((a, b) => b.c.total - a.c.total);
   const tot = contar(leads);
-  const nombre = g => (g >= 0 ? d.programas[g] : 'Sin programa identificado');
+  const lk = (gg, k, n) => numLink(n, aqui({ g: gg, v: k, ir: 'lista' }), k === 'sin_contacto' || k === 'sin_negocio');
   return h('section', { class: 'card' },
-    h('div', { class: 'sec-head' }, h('h2', null, 'Por programa'), h('p', null, 'Para ver solo un programa en todo el reporte, das clic en su fila.')),
+    h('div', { class: 'sec-head' }, h('h2', null, 'Por programa'), h('p', null, 'Para ver solo un programa en todo el reporte, das clic en su nombre. Cada número abre esos leads en la lista de abajo.')),
     filas.length ? h('div', { class: 'tscroll' }, h('table', null,
       h('thead', null, h('tr', null, h('th', null, 'Programa'), h('th', { class: 'num' }, 'Leads'), h('th', { class: 'num' }, 'En HubSpot'), ORDEN.map(k => h('th', { class: 'num' }, EST[k].corto)), h('th', { class: 'num' }, 'Desfasados'))),
-      h('tbody', null, filas.map(r => h('tr', { class: 'clic', tabindex: 0, onclick: () => { f.prog = f.prog === String(r.g) ? '' : String(r.g); vistaProveedor(i); }, onkeydown: e => { if (e.key === 'Enter') e.currentTarget.click(); } },
-        h('td', null, nombre(r.g)), h('td', { class: 'num' }, fNum(r.c.total)), h('td', { class: 'num' }, `${pct(r.c.enHs, r.c.total)} %`), ORDEN.map(k => h('td', { class: 'num' }, fNum(r.c[k]))), h('td', { class: 'num' }, fNum(r.c.desfasado))))),
+      h('tbody', null, filas.map(r => h('tr', { class: String(r.g) === g ? 'act' : null },
+        h('td', null, h('a', { class: 'plink', href: aqui({ g: String(r.g) === g ? null : r.g }) }, nombrePrograma(r.g))),
+        h('td', { class: 'num' }, lk(r.g, 'todos', r.c.total)), h('td', { class: 'num' }, `${pct(r.c.enHs, r.c.total)} %`),
+        ORDEN.map(k => h('td', { class: 'num' }, lk(r.g, k, r.c[k]))), h('td', { class: 'num' }, lk(r.g, 'desfasado', r.c.desfasado))))),
       filas.length > 1 ? h('tfoot', null, h('tr', null, h('td', null, 'Total'), h('td', { class: 'num' }, fNum(tot.total)), h('td', { class: 'num' }, `${pct(tot.enHs, tot.total)} %`), ORDEN.map(k => h('td', { class: 'num' }, fNum(tot[k]))), h('td', { class: 'num' }, fNum(tot.desfasado)))) : null))
       : h('p', { class: 'empty' }, 'No hay leads con estos filtros.'));
 }
 
-/* ---------- Lista de pendientes ---------- */
+/* ---------- Lista de leads ---------- */
 const VISTAS = [
   ['resolver', 'Por resolver', l => l.s === 'sin_negocio' || l.s === 'sin_contacto'],
+  ['sin_negocio', 'Sin negocio', l => l.s === 'sin_negocio'],
+  ['sin_contacto', 'Sin contacto', l => l.s === 'sin_contacto'],
   ['tardio', 'Negocio tardío', l => l.s === 'tardio'],
   ['desfasado', 'Desfasados', l => l.cs === 'desfasado'],
   ['previo', 'Ya tenían negocio', l => l.s === 'previo'],
+  ['completo', 'A tiempo', l => l.s === 'completo'],
+  ['enhs', 'En HubSpot', l => l.s !== 'sin_contacto'],
   ['todos', 'Todos', () => true],
 ];
-const urlContacto = id => /^\d+$/.test(id) ? `https://app.hubspot.com/contacts/${S.data.portalId}/record/0-1/${id}` : null;
-const urlNegocio = id => /^\d+$/.test(id) ? `https://app.hubspot.com/contacts/${S.data.portalId}/record/0-3/${id}` : null;
+const urlContacto = id => /^\d+$/.test(id || '') ? `https://app.hubspot.com/contacts/${S.data.portalId}/record/0-1/${id}` : null;
+const urlNegocio = id => /^\d+$/.test(id || '') ? `https://app.hubspot.com/contacts/${S.data.portalId}/record/0-3/${id}` : null;
+const urlBuscar = q => `https://app.hubspot.com/contacts/${S.data.portalId}/objects/0-1/views/all/list?query=${encodeURIComponent(q)}`;
 function queParo(l) {
   const d = S.data, r = d.reglas, t = [];
   if (l.s === 'sin_contacto') t.push('El correo no aparece en HubSpot.');
@@ -807,52 +1019,331 @@ function queParo(l) {
   if (l.cs === 'desfasado') t.push(`El contacto se creó ${duracion(l.dm / 60)} después del lead (más de ${r.desfaseMin} min).`);
   return t.join(' ');
 }
-function tarjetaLista(leads, i) {
-  const d = S.data;
-  const st = S.lista[i] || (S.lista[i] = { vista: 'resolver', q: '', n: 25 });
+function botonesHubSpot(l, grande) {
+  const cls = 'btn hs ' + (grande ? 'lg' : 'sm');
+  return [
+    l.c && urlContacto(l.c) ? h('a', { class: cls, href: urlContacto(l.c), target: '_blank', rel: 'noopener', title: 'Abrir el contacto en HubSpot' }, grande ? 'Abrir el contacto en HubSpot' : 'Contacto', externo()) : null,
+    l.d && urlNegocio(l.d) ? h('a', { class: cls, href: urlNegocio(l.d), target: '_blank', rel: 'noopener', title: 'Abrir el negocio en HubSpot' }, grande ? 'Abrir el negocio en HubSpot' : 'Negocio', externo()) : null,
+  ];
+}
+function tarjetaLista(leads, conProv) {
+  const d = S.data, key = S.path;
+  const st = S.lista[key] || (S.lista[key] = { q: '', n: 25 });
+  const vista = vistaActual();
   const cuenta = Object.fromEntries(VISTAS.map(([k, , fn]) => [k, leads.filter(fn).length]));
-  const card = h('section', { class: 'card' },
+  const card = h('section', { class: 'card', id: 'lista' },
     h('div', { class: 'sec-head' }, h('h2', null, 'Lista de leads'),
-      h('p', null, 'Aquí están los casos uno por uno. Para revisarlos en HubSpot, das clic en “Contacto” o “Negocio” y se abre el registro.')));
-  const repintar = () => { const nuevo = tarjetaLista(leads, i); card.replaceWith(nuevo); };
+      h('p', null, 'Para ver todo lo que pasó con un lead, das clic en su fila o en “Detalle”. Los botones naranjas abren el registro en HubSpot.')));
+  const repintar = () => { const nuevo = tarjetaLista(leads, conProv); card.replaceWith(nuevo); return nuevo; };
   card.append(h('div', { class: 'chips', role: 'group', 'aria-label': 'Qué casos ver' },
-    VISTAS.map(([k, t]) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(st.vista === k), onclick: () => { st.vista = k; st.n = 25; repintar(); } }, t, h('span', { class: 'c' }, fNum(cuenta[k]))))));
-  const fn = VISTAS.find(x => x[0] === st.vista)[2];
+    VISTAS.filter(([k]) => cuenta[k] || k === vista || k === 'todos' || k === 'resolver').map(([k, t]) =>
+      h('button', { type: 'button', class: 'chip', 'aria-pressed': String(vista === k), onclick: () => { st.n = 25; cambiar({ v: k === 'resolver' ? null : k }); } }, t, h('span', { class: 'c' }, fNum(cuenta[k]))))));
+  const fn = VISTAS.find(x => x[0] === vista)[2];
   const q = st.q.trim().toLowerCase();
   const filas = leads.filter(fn).filter(l => !q || (l.e || '').includes(q) || (l.n || '').toLowerCase().includes(q)).slice().sort((a, b) => b.t - a.t);
   const buscador = h('input', { type: 'search', placeholder: 'Buscar por nombre o correo', value: st.q, 'aria-label': 'Buscar por nombre o correo' });
-  buscador.addEventListener('input', e => { st.q = e.target.value; clearTimeout(buscador._t); buscador._t = setTimeout(() => { repintar(); const b = document.querySelector('.list-tools input'); if (b) { b.focus(); b.setSelectionRange(b.value.length, b.value.length); } }, 250); });
+  buscador.addEventListener('input', e => {
+    st.q = e.target.value; clearTimeout(S.tBusca);
+    S.tBusca = setTimeout(() => { const b = repintar().querySelector('.list-tools input'); if (b) { b.focus(); b.setSelectionRange(b.value.length, b.value.length); } }, 250);
+  });
   card.append(h('div', { class: 'list-tools' }, buscador,
-    h('button', { class: 'btn', type: 'button', onclick: () => exportarCSV(filas, `${d.proveedores[i].id}-${st.vista}`) }, 'Descargar CSV')));
-  if (!filas.length) { card.append(h('p', { class: 'empty' }, st.vista === 'resolver' ? 'No hay casos por resolver con estos filtros.' : 'No hay casos en esta vista.')); return card; }
+    h('button', { class: 'btn', type: 'button', onclick: () => exportarCSV(filas, `${conProv ? 'todos' : d.proveedores[filas[0]?.p]?.id || 'leads'}-${vista}`, conProv) }, 'Descargar CSV')));
+  if (!filas.length) { card.append(h('p', { class: 'empty' }, vista === 'resolver' ? 'No hay casos por resolver con estos filtros.' : 'No hay casos en esta vista.')); return card; }
   const visibles = filas.slice(0, st.n);
   card.append(h('div', { class: 'tscroll' }, h('table', null,
-    h('thead', null, h('tr', null, h('th', null, 'Fecha del lead'), h('th', null, 'Persona'), h('th', null, 'Programa'), h('th', null, 'Estatus'), h('th', null, 'Qué pasó'), h('th', null, 'Promotora'), h('th', null, 'HubSpot'))),
-    h('tbody', null, visibles.map(l => h('tr', null,
-      h('td', { style: 'white-space:nowrap' }, fDiaHora(l.t)),
+    h('thead', null, h('tr', null, h('th', null, 'Fecha del lead'), h('th', null, 'Persona'), h('th', null, conProv ? 'Programa y proveedor' : 'Programa'), h('th', null, 'Estatus'), h('th', null, 'Qué pasó'), h('th', null, 'Promotora'), h('th', null, 'Ver'))),
+    h('tbody', null, visibles.map(l => h('tr', { class: 'clic', tabindex: 0, onclick: e => { if (!e.target.closest('a,button')) abrirLead(l); }, onkeydown: e => { if (e.key === 'Enter' && e.target === e.currentTarget) abrirLead(l); } },
+      h('td', { class: 'cuando' }, fechaCorta(l.t), h('span', null, horaCorta(l.t))),
       h('td', { class: 'person' }, h('b', null, l.n || '—'), h('span', null, l.e)),
-      h('td', null, l.g >= 0 ? d.programas[l.g] : 'Sin programa identificado'),
+      h('td', null, nombrePrograma(l.g), conProv ? h('div', { class: 'muted', style: 'font-size:12.5px;margin-top:2px' }, d.proveedores[l.p]?.nombre || '') : null),
       h('td', null, badge(l.s), l.cs === 'desfasado' ? h('div', null, h('span', { class: 'flag' }, 'Desfasado')) : null),
       h('td', { style: 'min-width:220px' }, queParo(l)),
       h('td', null, l.o >= 0 && l.o != null ? d.propietarios[l.o] : '—'),
-      h('td', { class: 'links' },
-        l.c && urlContacto(l.c) ? h('a', { href: urlContacto(l.c), target: '_blank', rel: 'noopener' }, 'Contacto ↗') : null,
-        l.d && urlNegocio(l.d) ? h('a', { href: urlNegocio(l.d), target: '_blank', rel: 'noopener' }, 'Negocio ↗') : null,
-        !l.c ? h('span', { class: 'muted' }, '—') : null)))))));
+      h('td', { class: 'acc' },
+        h('button', { class: 'btn go sm', type: 'button', onclick: () => abrirLead(l) }, 'Detalle'),
+        botonesHubSpot(l, false))))))));
   card.append(h('div', { class: 'more' },
     h('span', { class: 'muted', style: 'font-size:13px' }, `Mostrando ${fNum(visibles.length)} de ${fNum(filas.length)}`),
     filas.length > st.n ? h('button', { class: 'btn', type: 'button', onclick: () => { st.n += 50; repintar(); } }, 'Mostrar 50 más') : null));
   return card;
 }
-function exportarCSV(filas, nombre) {
-  const d = S.data;
-  const enc = ['Fecha del lead', 'Nombre', 'Correo', 'Programa', 'Estatus', 'Contacto desfasado', 'Qué pasó', 'Promotora', 'Formulario', 'Enlace contacto', 'Enlace negocio'];
-  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const lineas = [enc.map(q).join(',')];
-  for (const l of filas) lineas.push([fDiaHora(l.t), l.n || '', l.e, l.g >= 0 ? d.programas[l.g] : '', EST[l.s].lbl, l.cs === 'desfasado' ? 'Sí' : '', queParo(l), l.o >= 0 && l.o != null ? d.propietarios[l.o] : '', l.f >= 0 && l.f != null ? d.formularios[l.f]?.n : '', l.c ? urlContacto(l.c) : '', l.d ? urlNegocio(l.d) : ''].map(q).join(','));
+function descargar(lineas, nombre) {
   const blob = new Blob(['﻿' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
   const a = h('a', { href: URL.createObjectURL(blob), download: `${nombre}-${new Date().toISOString().slice(0, 10)}.csv` });
   document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+const qcsv = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+function exportarCSV(filas, nombre, conProv) {
+  const d = S.data;
+  const enc = ['Fecha del lead', 'Nombre', 'Correo', ...(conProv ? ['Proveedor'] : []), 'Programa', 'Estatus', 'Contacto desfasado', 'Qué pasó', 'Promotora', 'Formulario', 'Enlace contacto', 'Enlace negocio'];
+  const lineas = [enc.map(qcsv).join(',')];
+  for (const l of filas) lineas.push([fDiaHora(l.t), l.n || '', l.e, ...(conProv ? [d.proveedores[l.p]?.nombre || ''] : []), l.g >= 0 ? d.programas[l.g] : '', EST[l.s].lbl, l.cs === 'desfasado' ? 'Sí' : '', queParo(l), l.o >= 0 && l.o != null ? d.propietarios[l.o] : '', l.f >= 0 && l.f != null ? d.formularios[l.f]?.n : '', l.c ? urlContacto(l.c) : '', l.d ? urlNegocio(l.d) : ''].map(qcsv).join(','));
+  descargar(lineas, nombre);
+}
+
+/* ---------- Panel con el detalle de un lead ---------- */
+const PLATAFORMA = { fb: 'Facebook', ig: 'Instagram', an: 'Audience Network', ms: 'Messenger', wa: 'WhatsApp', th: 'Threads' };
+const ORIGEN_PROG = { base: 'viene en la base del proveedor', formulario: 'sale del nombre del formulario', pestana: 'sale de la pestaña de la base', inferido: 'se dedujo de los otros leads del mismo formulario', contacto: 'es el que tiene el contacto en HubSpot' };
+function paso(color, titulo, cuando, texto) {
+  return h('li', null, h('span', { class: 'dot', style: `background:var(${color})`, 'aria-hidden': 'true' }),
+    h('div', { class: 'tt' }, titulo), cuando ? h('div', { class: 'cu' }, cuando) : null, texto ? h('div', { class: 'tx' }, texto) : null);
+}
+function abrirLead(l) {
+  const d = S.data, r = d.reglas, dlg = $('#drawer');
+  const form = l.f >= 0 && l.f != null ? d.formularios[l.f] : null;
+  const prov = d.proveedores[l.p]?.nombre || '';
+  const pasos = [paso('--accent', 'Llegó el lead', fDiaHora(l.t), [prov, form?.n].filter(Boolean).join(' · '))];
+  if (l.c) {
+    const txt = l.cs === 'existente' ? `Ya existía en HubSpot desde el ${fDia(l.ct)}, antes del lead.`
+      : l.cs === 'desfasado' ? `Se creó ${duracion(l.dm / 60)} después del lead (más de ${r.desfaseMin} min).`
+      : l.dm > 0 ? `Se creó ${duracion(l.dm / 60)} después del lead.` : 'Se creó al mismo tiempo que el lead.';
+    pasos.push(paso(l.cs === 'desfasado' ? '--st-warn' : '--st-good', 'Contacto en HubSpot', l.ct ? fDiaHora(l.ct) : null, txt));
+  } else pasos.push(paso('--st-critical', 'Contacto en HubSpot', 'No aparece', 'El correo no está en HubSpot, ni como correo principal ni como secundario.'));
+  if (l.d) {
+    const et = l.et >= 0 && d.etapas[l.et] ? d.etapas[l.et] : '';
+    const txt = { completo: `Se creó ${duracion(l.dh)} después del lead, dentro de las ${r.ventanaNegocioHoras} h.`, tardio: `Se creó ${duracion(l.dh)} después del lead, ya fuera de las ${r.ventanaNegocioHoras} h.`, previo: 'Ya existía desde antes del lead, así que no se abrió otro.' }[l.s] || '';
+    pasos.push(paso(EST[l.s]?.v || '--ink-3', `Negocio${et ? ` · ${et}` : ''}`, l.dt ? fDiaHora(l.dt) : null, txt));
+  } else if (l.c) {
+    pasos.push(paso('--st-serious', 'Negocio', 'Sin negocio de este programa', 'El contacto no tiene ningún negocio de este programa.'));
+  }
+  const datos = [
+    ['Proveedor', prov],
+    ['Programa', l.g >= 0 ? `${d.programas[l.g]}${l.gf && ORIGEN_PROG[l.gf] ? ` (${ORIGEN_PROG[l.gf]})` : ''}` : 'Sin programa identificado'],
+    l.dp >= 0 && l.dp != null ? ['Programa del negocio', d.programas[l.dp]] : null,
+    ['Promotora', l.o >= 0 && l.o != null ? d.propietarios[l.o] : '—'],
+    form ? ['Formulario', form.n] : null,
+    form?.c ? ['Campaña', form.c] : null,
+    l.pl ? ['Plataforma', PLATAFORMA[l.pl] || l.pl] : null,
+    l.id ? ['ID del lead', l.id] : null,
+  ].filter(Boolean);
+  const otro = l.op >= 0 && l.op != null;
+  const copiar = h('button', { type: 'button', class: 'btn sm', onclick: async e => {
+    try { await navigator.clipboard.writeText(l.e); e.currentTarget.textContent = 'Correo copiado'; } catch (x) { e.currentTarget.textContent = 'No se pudo copiar'; }
+  } }, 'Copiar correo');
+  dlg.replaceChildren(
+    h('div', { class: 'dw-head' },
+      h('div', { style: 'display:grid;gap:6px;min-width:0' }, h('div', { class: 'eyebrow' }, 'Detalle del lead'), h('h2', { id: 'dw-nombre' }, l.n || l.e || 'Lead'), l.n ? h('div', { class: 'mail' }, l.e) : null,
+        h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px;align-items:center' }, badge(l.s), l.cs === 'desfasado' ? h('span', { class: 'flag', style: 'margin:0' }, 'Desfasado') : null)),
+      h('button', { type: 'button', class: 'dw-x', 'aria-label': 'Cerrar', onclick: () => dlg.close() }, cruz())),
+    h('div', { class: 'dw-body' },
+      h('p', { class: 'que' }, queParo(l)),
+      (l.c || l.d || otro) ? h('div', { class: 'dw-acc' }, botonesHubSpot(l, true),
+        otro && urlNegocio(l.oi) ? h('a', { class: 'btn sm', href: urlNegocio(l.oi), target: '_blank', rel: 'noopener' }, `Negocio de ${d.programas[l.op]}`, externo()) : null)
+        : h('div', { class: 'dw-acc' }, h('a', { class: 'btn hs lg', href: urlBuscar(l.e), target: '_blank', rel: 'noopener' }, lupa(), 'Buscar el correo en HubSpot', externo())),
+      h('div', null, h('h3', null, 'Qué pasó, paso a paso'), h('ol', { class: 'tl' }, pasos)),
+      h('div', null, h('h3', null, 'Datos'), h('dl', { class: 'kv' }, datos.map(([k, val]) => [h('dt', null, k), h('dd', null, val)]))),
+      h('div', { class: 'dw-acc' }, copiar)));
+  S.foco = document.activeElement;
+  dlg.showModal();
+  dlg.scrollTop = 0;
+}
+(() => {
+  const dlg = $('#drawer');
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('close', () => { if (S.foco && document.contains(S.foco)) S.foco.focus(); });
+})();
+
+/* ---------- Meta → HubSpot (conciliación) ---------- */
+const PG_EST = {
+  ok:         { lbl: 'Conectada',         v: '--st-good' },
+  sin_acceso: { lbl: 'Acceso pendiente',  v: '--st-neutral' },
+  error:      { lbl: 'Sin lectura en esta actualización', v: '--st-critical' },
+};
+function pillPagina(estado) {
+  const e = PG_EST[estado] || PG_EST.error;
+  return h('span', { class: 'pill' }, h('i', { style: `background:var(${e.v})`, 'aria-hidden': 'true' }), e.lbl);
+}
+// Porcentaje para la conciliación: con un decimal y sin redondear a 100 % si falta alguno.
+function pctC(a, b) { if (!b) return '0'; if (a >= b) return '100'; const x = Math.floor((a / b) * 1000) / 10; return x.toLocaleString('es-MX', { maximumFractionDigits: 1 }); }
+function nombreProv(id) { return (S.data.proveedores.find(p => p.id === id) || {}).nombre || '—'; }
+// La comparación filtrada por el periodo elegido (dentro de los ~90 días que guarda Meta).
+function concEnRango(c, L) {
+  const wLo = claveDia(c.desde), wHi = claveDia(c.hasta);
+  const lo = Math.max(L.lo, wLo), hi = Math.min(L.hi, wHi);
+  const vacio = () => ({ meta: 0, coinciden: 0, faltan: 0, soloHs: 0 });
+  const todo = !Number.isFinite(L.lo) && !Number.isFinite(L.hi);
+  const R = { lo, hi, wLo, wHi, todo, fuera: lo > hi, recorte: Number.isFinite(L.lo) && L.lo < wLo, total: vacio(), dias: [], desglose: true };
+  const en = k => k != null && k >= lo && k <= hi;
+  for (const [x, [m, ok]] of Object.entries(c.dias || {})) { const k = kDeFecha(x); if (en(k)) { R.dias.push([k, m, ok]); R.total.meta += m; R.total.coinciden += ok; } }
+  R.total.faltan = R.total.meta - R.total.coinciden;
+  if (c.formularios.some(f => f.dias)) {
+    R.formularios = c.formularios.map(f => {
+      const x = { ...f, ...vacio() };
+      for (const [dd, a] of Object.entries(f.dias || {})) if (en(kDeFecha(dd))) { x.meta += a[0]; x.coinciden += a[1]; x.soloHs += a[2] || 0; }
+      x.faltan = x.meta - x.coinciden; return x;
+    });
+    R.paginas = c.paginas.map((p, i) => {
+      const x = { ...p, ...vacio() };
+      for (const f of R.formularios) if (f.pg === i) { x.meta += f.meta; x.coinciden += f.coinciden; x.faltan += f.faltan; x.soloHs += f.soloHs; }
+      return x;
+    });
+    R.total.soloHs = R.paginas.reduce((a, p) => a + p.soloHs, 0);
+  } else {
+    // Reporte generado antes de que el motor guardara los días por formulario: desglose de toda la ventana.
+    R.formularios = c.formularios; R.paginas = c.paginas; R.desglose = todo;
+    R.total.soloHs = todo ? c.total.soloHs : null;
+  }
+  R.faltantes = c.faltantes.filter(l => en(claveDia(l.t)));
+  return R;
+}
+function veredicto(t) {
+  if (!t.meta) return { ok: true, txt: 'En este periodo no hay leads de Meta en las páginas conectadas.' };
+  if (!t.faltan) return { ok: true, txt: `Sí. Los ${fNum(t.meta)} leads que Meta registró en este periodo están en HubSpot.` };
+  return { ok: false, txt: `Llegaron ${fNum(t.coinciden)} de ${fNum(t.meta)} (${pctC(t.coinciden, t.meta)} %). ${t.faltan === 1 ? 'Falta 1 lead' : `Faltan ${fNum(t.faltan)} leads`} por llegar a HubSpot.` };
+}
+function lineaVeredicto(t) {
+  const v = veredicto(t);
+  return h('div', { class: 'verdict' + (v.ok ? ' ok' : ' warn') },
+    h('span', { class: 'ico', 'aria-hidden': 'true' }, v.ok ? '✓' : '!'), h('p', null, v.txt));
+}
+
+function tarjetaConciliacion(L) {
+  const c = S.data.conciliacion;
+  if (!c) return null;
+  const card = h('section', { class: 'card cmp' });
+  card.append(h('div', { class: 'cmp-head' },
+    h('div', { class: 'sec-head', style: 'margin-bottom:0' },
+      h('div', { class: 'eyebrow' }, 'Meta → HubSpot'),
+      h('h2', null, '¿Llegan a HubSpot todos los leads de Meta?'))));
+  if (c.error) {
+    card.append(h('p', { class: 'sub', style: 'margin-top:10px' }, 'En esta actualización no se pudo leer Meta. Se vuelve a intentar sola en la siguiente actualización.'));
+    return card;
+  }
+  const R = concEnRango(c, L), t = R.total, conectadas = c.paginas.filter(p => p.estado === 'ok').length;
+  if (R.fuera) {
+    card.append(h('p', { class: 'sub', style: 'margin:10px 0 14px;max-width:72ch;font-size:14px' }, `Meta conserva los leads de los últimos 90 días (del ${fK(R.wLo)} al ${fK(R.wHi)}), así que este periodo queda fuera de la comparación.`),
+      h('a', { class: 'btn go sm', href: '#/meta' }, 'Ver la comparación de los últimos 90 días', flecha()));
+    return card;
+  }
+  card.append(
+    h('p', { class: 'sub', style: 'margin:8px 0 14px;max-width:72ch;font-size:14px' },
+      `Comparamos, uno por uno, los leads que Meta registró en los formularios de las páginas conectadas contra lo que llegó a HubSpot, del ${fK(R.lo)} al ${fK(R.hi)}${R.recorte ? ' (Meta conserva solo los últimos 90 días)' : ''}.`),
+    lineaVeredicto(t),
+    h('div', { class: 'prov-nums', style: 'margin:16px 0 14px' },
+      num('Leads en Meta', fNum(t.meta)), num('Llegaron a HubSpot', pctC(t.coinciden, t.meta), '%'), num('No llegaron', fNum(t.faltan)), num('Páginas conectadas', `${conectadas}`, `de ${c.paginas.length}`)),
+    h('div', { class: 'pills', style: 'margin-bottom:14px' }, c.paginas.map(p => h('span', { class: 'pg' }, h('b', null, p.nombre || p.id), pillPagina(p.estado)))),
+    h('div', { class: 'dw-acc' },
+      h('a', { class: 'btn go sm', href: enlace('/meta') }, 'Ver la comparación', flecha()),
+      t.faltan ? h('a', { class: 'btn warn sm', href: enlace('/meta', { ir: 'faltantes' }) }, `Ver ${t.faltan === 1 ? 'el lead que no llegó' : `los ${fNum(t.faltan)} que no llegaron`}`, flecha()) : null));
+  return card;
+}
+function barraConc(llegaron, faltan) {
+  const bar = h('div', { class: 'hbar', role: 'img', 'aria-label': `Llegaron ${llegaron}, no llegaron ${faltan}`, style: 'height:8px;min-width:90px' });
+  if (llegaron) bar.append(h('span', { style: `flex:${llegaron};background:var(--st-good)` }));
+  if (faltan) bar.append(h('span', { style: `flex:${faltan};background:var(--st-critical)` }));
+  return bar;
+}
+
+function vistaConciliacion() {
+  const d = S.data, c = d.conciliacion;
+  const atras = volver('Inicio', enlace('/'));
+  if (!c || c.error) {
+    pintar(atras, h('section', { class: 'card', style: 'margin-top:12px' }, h('h2', null, 'Meta → HubSpot'),
+      h('p', { class: 'sub', style: 'margin-top:6px' }, c ? 'En esta actualización no se pudo leer Meta. Se vuelve a intentar sola en la siguiente actualización.' : 'La comparación con Meta todavía no está configurada.')));
+    return;
+  }
+  const L = limites(), R = concEnRango(c, L), t = R.total;
+  const pagNom = i => c.paginas[i]?.nombre || c.paginas[i]?.id || '';
+  const pgSel = S.q.get('pg') ?? '', fmSel = S.q.get('fm') || '';
+  const cabecera = h('div', { style: 'display:grid;gap:6px;margin:14px 0 18px' }, h('div', { class: 'eyebrow' }, 'Meta → HubSpot'), h('h2', { style: 'font-size:24px' }, '¿Llegan a HubSpot todos los leads de Meta?'),
+    h('div', { class: 'meta-line' }, R.fuera ? null : h('span', null, 'Periodo comparado: ', h('b', null, `${fK(R.lo)} – ${fK(R.hi)}`)), h('span', null, 'Páginas conectadas: ', h('b', null, `${c.paginas.filter(p => p.estado === 'ok').length} de ${c.paginas.length}`))));
+  if (R.fuera) {
+    pintar(atras, cabecera, h('div', { class: 'nota' }, `Meta conserva los leads de los últimos 90 días (del ${fK(R.wLo)} al ${fK(R.wHi)}), así que el periodo elegido queda fuera de la comparación. Para verla, eliges un periodo más reciente arriba.`));
+    return;
+  }
+  const notas = [];
+  if (R.recorte) notas.push(h('div', { class: 'nota' }, `Meta conserva solo los últimos 90 días: del periodo elegido, se compara del ${fK(R.lo)} al ${fK(R.hi)}.`));
+  if (!R.desglose) notas.push(h('div', { class: 'nota' }, 'Las tablas por página y por formulario todavía muestran los 90 días completos; a partir de la próxima actualización del reporte también se ajustan al periodo elegido.'));
+
+  // Por página (si no hay desglose por día, la tabla muestra los 90 días completos y su total)
+  const tp = R.desglose ? t : c.total;
+  const lkPg = (i, n) => numLink(n, aqui({ pg: i, fm: null, ir: 'faltantes' }), true);
+  const tPag = h('section', { class: 'card' },
+    h('div', { class: 'sec-head' }, h('h2', null, 'Por página de Facebook'),
+      h('p', null, 'Para ver los leads que no llegaron de una página, das clic en su número. Las páginas con acceso pendiente se suman aquí solas en cuanto quede su acceso.')),
+    h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, 'Página'), h('th', null, 'Estado'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron a HubSpot'), h('th', { class: 'num' }, 'No llegaron'), h('th', null, ''))),
+      h('tbody', null, R.paginas.map((p, i) => h('tr', { class: String(i) === pgSel ? 'act' : null },
+        h('td', null, p.nombre || p.id), h('td', null, pillPagina(p.estado)),
+        h('td', { class: 'num' }, p.estado === 'ok' ? fNum(p.meta) : '—'),
+        h('td', { class: 'num' }, p.estado === 'ok' ? `${fNum(p.coinciden)}${p.meta ? ` (${pctC(p.coinciden, p.meta)} %)` : ''}` : '—'),
+        h('td', { class: 'num' }, p.estado === 'ok' ? (R.desglose ? lkPg(i, p.faltan) : fNum(p.faltan)) : '—'),
+        h('td', null, p.estado === 'ok' && p.meta ? barraConc(p.coinciden, p.faltan) : null)))),
+      h('tfoot', null, h('tr', null, h('td', null, 'Total'), h('td', null, ''), h('td', { class: 'num' }, fNum(tp.meta)), h('td', { class: 'num' }, `${fNum(tp.coinciden)}${tp.meta ? ` (${pctC(tp.coinciden, tp.meta)} %)` : ''}`), h('td', { class: 'num' }, fNum(tp.faltan)), h('td', null, ''))))));
+
+  // Por periodo (día o semana, según el largo)
+  const agr = (Math.min(R.hi, hoyK()) - R.lo) / DIA + 1 <= 14 ? 'dia' : 'semana';
+  const grupos = new Map();
+  for (const [k, m, ok] of R.dias) { const u = llaveDe(k, agr); const x = grupos.get(u) || [0, 0]; x[0] += m; x[1] += ok; grupos.set(u, x); }
+  const filasP = [...grupos.entries()].sort((a, b) => b[0] - a[0]);
+  const tSem = h('section', { class: 'card' },
+    h('div', { class: 'sec-head' }, h('h2', null, agr === 'dia' ? 'Día a día' : 'Semana a semana'), h('p', null, `Leads que Meta registró cada ${agr === 'dia' ? 'día' : 'semana'} y cuántos de ellos están en HubSpot. Para ver solo ese periodo, das clic en “Ver”.`)),
+    filasP.length ? h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, agr === 'dia' ? 'Día' : 'Semana'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron a HubSpot'), h('th', { class: 'num' }, 'No llegaron'), h('th', null, ''), h('th', null, ''))),
+      h('tbody', null, filasP.map(([u, [m, ok]]) => h('tr', null, h('td', null, etiquetaPeriodo(u, agr)), h('td', { class: 'num' }, fNum(m)), h('td', { class: 'num' }, fNum(ok)), h('td', { class: 'num' }, fNum(m - ok)), h('td', null, barraConc(ok, m - ok)),
+        h('td', null, h('a', { class: 'btn go sm', href: hashRango(Math.max(u, R.lo), Math.min(finPeriodo(u, agr), R.hi)) }, 'Ver', flecha())))))))
+      : h('p', { class: 'empty' }, 'No hay leads en este periodo.'));
+
+  // Por formulario
+  const forms = R.formularios.filter(f => f.meta || f.soloHs);
+  const tForm = h('section', { class: 'card' },
+    h('div', { class: 'sec-head' }, h('h2', null, 'Por formulario'), h('p', null, 'Cada formulario de Meta con leads en el periodo y su agencia. Para ver los que no llegaron de un formulario, das clic en su número.')),
+    forms.length ? h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, 'Formulario'), h('th', null, 'Página'), h('th', null, 'Agencia'), h('th', { class: 'num' }, 'Leads en Meta'), h('th', { class: 'num' }, 'Llegaron'), h('th', { class: 'num' }, 'No llegaron'), h('th', { class: 'num' }, 'Solo en HubSpot'))),
+      h('tbody', null, forms.slice().sort((a, b) => b.meta - a.meta).map(f => h('tr', { class: f.n === fmSel ? 'act' : null },
+        h('td', { style: 'min-width:240px' }, f.n), h('td', null, pagNom(f.pg)), h('td', null, f.prov ? h('a', { class: 'plink', href: enlace(`/p/${f.prov}`) }, nombreProv(f.prov)) : '—'),
+        h('td', { class: 'num' }, fNum(f.meta)), h('td', { class: 'num' }, fNum(f.coinciden)),
+        h('td', { class: 'num' }, R.desglose ? numLink(f.faltan, aqui({ fm: f.n, pg: f.pg, ir: 'faltantes' }), true) : fNum(f.faltan)), h('td', { class: 'num' }, fNum(f.soloHs)))))))
+      : h('p', { class: 'empty' }, 'No hay formularios con leads en este periodo.'));
+
+  // Lista de los que no llegaron
+  let falt = R.faltantes;
+  const porPg = new Map(); for (const l of falt) porPg.set(l.pg, (porPg.get(l.pg) || 0) + 1);
+  if (pgSel !== '') falt = falt.filter(l => String(l.pg) === pgSel);
+  if (fmSel) falt = falt.filter(l => l.f === fmSel);
+  const tFalt = h('section', { class: 'card', id: 'faltantes' },
+    h('div', { class: 'sec-head' }, h('h2', null, 'Leads que no llegaron a HubSpot'),
+      h('p', null, R.faltantes.length ? 'Estos leads están en Meta y no aparecen en HubSpot. Con “Buscar en HubSpot” revisas si entraron con otro correo; para revisarlos con calma, puedes descargarlos en CSV.' : 'Aquí aparecerían, uno por uno, los leads de Meta que no estén en HubSpot.')));
+  if (!R.faltantes.length) tFalt.append(h('p', { class: 'empty' }, 'No hay. Todos los leads de Meta de este periodo están en HubSpot.'));
+  else {
+    if (porPg.size > 1 || pgSel !== '') tFalt.append(h('div', { class: 'chips', role: 'group', 'aria-label': 'Página' },
+      h('button', { type: 'button', class: 'chip', 'aria-pressed': String(pgSel === '' && !fmSel), onclick: () => cambiar({ pg: null, fm: null }) }, 'Todas', h('span', { class: 'c' }, fNum(R.faltantes.length))),
+      [...porPg.entries()].map(([i, n]) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(String(i) === pgSel && !fmSel), onclick: () => cambiar({ pg: i, fm: null }) }, pagNom(i), h('span', { class: 'c' }, fNum(n))))));
+    if (fmSel) tFalt.append(h('div', { class: 'activos', style: 'margin-top:0' }, h('span', { class: 'fchip' }, 'Formulario: ', h('b', null, fmSel), h('a', { href: aqui({ fm: null }), 'aria-label': 'Quitar el filtro de formulario' }, cruz()))));
+    tFalt.append(h('div', { class: 'list-tools' }, h('span', { class: 'muted', style: 'font-size:13px' }, `${fNum(falt.length)} lead${falt.length === 1 ? '' : 's'}${c.faltantesRecortados ? ' (se muestran los más recientes)' : ''}`),
+      h('button', { class: 'btn', type: 'button', onclick: () => exportarFaltantes(falt, c) }, 'Descargar CSV')));
+    tFalt.append(falt.length ? h('div', { class: 'tscroll' }, h('table', null,
+      h('thead', null, h('tr', null, h('th', null, 'Fecha del lead'), h('th', null, 'Persona'), h('th', null, 'Formulario'), h('th', null, 'Página'), h('th', null, ''))),
+      h('tbody', null, falt.slice(0, 200).map(l => h('tr', null,
+        h('td', { style: 'white-space:nowrap' }, fDiaHora(l.t)), h('td', { class: 'person' }, h('b', null, l.n || '—'), h('span', null, l.e || 'Sin correo')),
+        h('td', null, l.f), h('td', null, pagNom(l.pg)),
+        h('td', { class: 'acc' }, l.e ? h('a', { class: 'btn hs sm', href: urlBuscar(l.e), target: '_blank', rel: 'noopener' }, lupa(), 'Buscar en HubSpot') : null))))))
+      : h('p', { class: 'empty' }, 'No hay leads con este filtro.'));
+  }
+
+  // Cómo se compara
+  const como = h('section', { class: 'card how' },
+    h('h2', null, 'Cómo se hace la comparación'),
+    h('dl', null,
+      h('dt', null, h('b', null, 'De dónde sale')), h('dd', null, 'Los leads se leen directo de Meta, de cada formulario de las páginas conectadas, en modo de solo lectura.'),
+      h('dt', null, h('b', null, 'Cómo se busca')), h('dd', null, 'Cada lead se busca en HubSpot entre los envíos de ese mismo formulario: primero por su correo y, si no aparece, por la hora exacta en que llegó.'),
+      h('dt', null, h('b', null, 'Periodo')), h('dd', null, `Meta guarda los leads de los últimos 90 días, por eso la comparación cubre como máximo del ${fK(R.wLo)} al ${fK(R.wHi)}. Lo anterior se ve en la tarjeta de cada proveedor.`),
+      h('dt', null, h('b', null, 'Leads muy recientes')), h('dd', null, 'Los leads de la última media hora se comparan en la siguiente actualización, para darle tiempo a la sincronización.'),
+      h('dt', null, h('b', null, 'Solo en HubSpot')), h('dd', null, 'Envíos que están en HubSpot sin su par en Meta, por ejemplo cuando un mismo lead entró dos veces. No es un faltante.')));
+
+  pintar(atras, cabecera, notas,
+    h('div', { style: 'margin-bottom:18px' }, lineaVeredicto(t)),
+    h('div', { class: 'tiles t4' },
+      tile('Leads en Meta', fNum(t.meta), 'En las páginas conectadas'),
+      tile('Llegaron a HubSpot', pctC(t.coinciden, t.meta), `${fNum(t.coinciden)} de ${fNum(t.meta)}`, '%'),
+      t.faltan ? tileLink('No llegaron', fNum(t.faltan), 'Están en la lista de abajo', null, aqui({ pg: null, fm: null, ir: 'faltantes' }), { tono: 'alerta', ver: 'Ver la lista' }) : tile('No llegaron', '0', 'Ninguno en el periodo'),
+      tile('Solo en HubSpot', t.soloHs == null ? '—' : fNum(t.soloHs), 'Sin su par en Meta (p. ej. duplicados)')),
+    tPag, tSem, tForm, tFalt, como);
+}
+function exportarFaltantes(lista, c) {
+  const lineas = [['Fecha del lead', 'Nombre', 'Correo', 'Formulario', 'Página'].map(qcsv).join(',')];
+  for (const l of lista) lineas.push([fDiaHora(l.t), l.n, l.e, l.f, c.paginas[l.pg]?.nombre || ''].map(qcsv).join(','));
+  descargar(lineas, 'meta-no-llegaron-a-hubspot');
 }
 
 /* ---------- Actualizar ---------- */
@@ -866,7 +1357,7 @@ async function recargarSiHayNuevo() {
     if (sobre.sal !== S.sobre.sal) throw new Error('otra sal');
     S.data = await abrir(sobre, S.llave); S.sobre = sobre;
   } catch (e) { try { sessionStorage.removeItem('rp_llave'); } catch (x) {} location.reload(); return true; }
-  indexar(); pintarMeta(); ruta(); return true;
+  indexar(); pintarMeta(); ruta(false); return true;
 }
 $('#btn-refresh').addEventListener('click', async () => {
   const btn = $('#btn-refresh'); btn.disabled = true;

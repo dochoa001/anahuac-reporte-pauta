@@ -2,8 +2,9 @@
 
 Página que muestra, por proveedor de pauta, si cada lead de su base **ya es contacto en HubSpot** y si **tiene su negocio**. Sirve para encontrar los negocios que el workflow no creó y los contactos desfasados.
 
-- **Portada:** una tarjeta por proveedor con sus leads, % en HubSpot, % con negocio a tiempo y casos por resolver.
-- **Detalle por proveedor:** filtros de periodo, semana/mes y programa. Incluye una gráfica por periodo, una tabla por programa y la lista de casos, con enlace al contacto o negocio en HubSpot y descarga en CSV.
+- **Periodo (para todo el reporte):** atajos (Todo, últimos 7/30/90 días, este mes, mes pasado y más), un botón por cada mes con datos y fechas *Desde/Hasta* libres. El periodo queda en la dirección (`#/p/nods?r=30`, `?r=custom&d=2026-09-01&h=2026-09-30`), así que se puede compartir el enlace tal cual.
+- **Portada:** indicadores que se abren, una tarjeta por proveedor con sus leads, % en HubSpot, % con negocio a tiempo y casos por resolver (cada tramo de la barra y cada estatus abre su lista).
+- **Detalle por proveedor** y **Todos los leads** (`#/leads`): programa (y proveedor), agrupar por día/semana/mes, gráfica (cada columna abre ese periodo), tablas por proveedor y por programa donde cada número abre esos leads, y la lista de casos con panel de detalle por lead (paso a paso, datos y botones a HubSpot) y descarga en CSV.
 - **Se actualiza sola cada hora.** El botón *Actualizar* busca la versión más reciente. Si está configurado el paso opcional 5, además pide una actualización en ese momento.
 
 ## Cómo funciona
@@ -125,6 +126,7 @@ Responde una sola pregunta para la clienta: **¿cada lead que entró por un form
 | `conciliacionMeta` (en `REPORT_CONFIG`) | Páginas de Facebook a comparar (`id` y `nombre`), días de ventana (`dias`, máx. 89; Meta guarda ~90) y margen para los leads recién llegados (`margenMin`) |
 | `leerPaginasMeta` (`src/fuentes.mjs`) | Con el token de cada página: `leadgen_forms` y luego `/{form}/leads` con filtro por fecha. Solo pide los formularios con leads recientes o creados en la ventana. Solo GET |
 | `conciliar` (`src/conciliacion.mjs`) | Cruza cada lead de Meta con los envíos `FACEBOOK_LEAD_AD` de HubSpot (el mismo escaneo de la fuente `hubspot`): mismo formulario + mismo correo (≤ 24 h) y, si no, mismo formulario + misma hora (≤ 5 min). Uno a uno |
+| Conteos por día | Cada formulario lleva `dias` (`{ 'AAAA-MM-DD': [en Meta, llegaron, solo en HubSpot] }`) para que la página filtre la comparación por el periodo elegido |
 | Secreto `META_TOKENS` | `{"paginas":{"<idPagina>":"<token de página>"}}`. Una página sin token sale como *Acceso pendiente* y no tumba la corrida |
 
 **Tokens.** Se cargan con `_local/cargar-tokens-meta.ps1` (fuera del repo): pide el token de usuario *ampliado* (Depurador de tokens → *Ampliar token de acceso*), saca los tokens de página (no caducan), revisa que lean formularios y los guarda con `gh secret set META_TOKENS` sin mostrarlos. Hay que volver a correrlo si se agrega una página, si cambia la contraseña de Facebook de quien los generó o si esa persona pierde su rol en la página.

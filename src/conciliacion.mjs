@@ -9,6 +9,8 @@
 // Cruce, uno a uno:
 //  1) mismo formulario (por nombre) + mismo correo, el envío más cercano en tiempo (≤ 24 h);
 //  2) lo que quede: mismo formulario y misma hora (≤ 5 min), por si el contacto quedó con otro correo principal.
+// Cada formulario lleva además `dias`: { 'AAAA-MM-DD': [en Meta, llegaron, solo en HubSpot] } (día en la zona del portal),
+// para que la página filtre la comparación por cualquier periodo dentro de la ventana.
 // Solo se cuentan los leads de Meta dentro de la ventana; del lado de HubSpot se busca con 24 h de holgura
 // en las orillas para no marcar como faltante un lead que cayó justo en el corte.
 import { normalizar } from './util.mjs';
@@ -69,7 +71,7 @@ export function conciliar({ paginas = [], envios = [], desde, hasta, duenio = ()
   const resForm = new Map();
   const formDe = (ip, nombre) => {
     const kk = `${ip}|${k(nombre)}`;
-    if (!resForm.has(kk)) resForm.set(kk, { pg: ip, n: nombre, prov: duenio(hsFormId.get(k(nombre)) || '', nombre) || null, ...vacio() });
+    if (!resForm.has(kk)) resForm.set(kk, { pg: ip, n: nombre, prov: duenio(hsFormId.get(k(nombre)) || '', nombre) || null, ...vacio(), dias: {} });
     return resForm.get(kk);
   };
   const dias = {};
@@ -78,8 +80,9 @@ export function conciliar({ paginas = [], envios = [], desde, hasta, duenio = ()
     const ok = par[j] >= 0;
     const rp = resPag[l.ip], rf = formDe(l.ip, l.formNombre);
     const d = dia(l.t); const rd = dias[d] || (dias[d] = [0, 0]);
-    rp.meta++; rf.meta++; rd[0]++;
-    if (ok) { rp.coinciden++; rf.coinciden++; rd[1]++; }
+    const fd = rf.dias[d] || (rf.dias[d] = [0, 0, 0]);
+    rp.meta++; rf.meta++; rd[0]++; fd[0]++;
+    if (ok) { rp.coinciden++; rf.coinciden++; rd[1]++; fd[1]++; }
     else {
       rp.faltan++; rf.faltan++;
       if (faltantes.length < maxFaltantes) faltantes.push({ pg: l.ip, t: l.t, e: l.email || '', n: l.nombre || '', f: l.formNombre || '' });
@@ -88,7 +91,9 @@ export function conciliar({ paginas = [], envios = [], desde, hasta, duenio = ()
   hs.forEach((e, i) => {
     if (!libre[i] || e.t < desde || e.t >= hasta) return;
     const ip = pagDeForm.get(k(e.formNombre));
-    resPag[ip].soloHs++; formDe(ip, e.formNombre).soloHs++;
+    const rf = formDe(ip, e.formNombre), d = dia(e.t);
+    resPag[ip].soloHs++; rf.soloHs++;
+    (rf.dias[d] || (rf.dias[d] = [0, 0, 0]))[2]++;
   });
 
   const total = resPag.reduce((a, p) => ({ meta: a.meta + p.meta, coinciden: a.coinciden + p.coinciden, faltan: a.faltan + p.faltan, soloHs: a.soloHs + p.soloHs }), vacio());
