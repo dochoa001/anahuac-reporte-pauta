@@ -268,6 +268,10 @@ section[id]{scroll-margin-top:16px}
 .fchip a{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;color:var(--ink-2)}
 .fchip a:hover{background:var(--surface-2);color:var(--ink)}
 .nota{background:var(--surface-2);border-radius:10px;padding:10px 14px;font-size:13.5px;color:var(--ink-2);margin-bottom:16px}
+details.aclara{background:var(--surface-2);border-radius:12px;padding:12px 16px;margin:-4px 0 20px;font-size:14px;color:var(--ink-2)}
+details.aclara summary{cursor:pointer;font-weight:600;color:var(--ink)}
+details.aclara .cuerpo{display:grid;gap:8px;margin-top:10px;max-width:80ch}
+details.aclara b{color:var(--ink);font-weight:600}
 
 /* Detalle del lead */
 dialog.drawer{position:fixed;inset:0 0 0 auto;margin:0;width:min(480px,100vw);max-width:100vw;height:100%;max-height:100%;border:0;border-left:1px solid var(--line);padding:0;background:var(--surface);color:var(--ink);box-shadow:-24px 0 48px -24px rgba(0,0,0,.4);overflow-y:auto}
@@ -686,6 +690,30 @@ function barraEstatus(c, enlaceDe) {
   return bar;
 }
 const nombrePrograma = g => (g >= 0 && g != null ? S.data.programas[g] : 'Sin programa identificado');
+// Personas detrás de los leads: una persona puede enviar más de un formulario, y puede que ya estuviera en HubSpot.
+//   nuevos  = su contacto se creó dentro del periodo (o después) · previos = ya estaba en HubSpot antes del periodo
+function personas(leads, L) {
+  const ini = bordes(L).lo, vistos = new Map();
+  for (const l of leads) { const k = l.c ? 'c' + l.c : 'e' + l.e; if (!vistos.has(k)) vistos.set(k, l); }
+  const p = { total: vistos.size, nuevos: 0, previos: 0, sinContacto: 0, repetidos: leads.length - vistos.size };
+  for (const l of vistos.values()) { if (!l.c) p.sinContacto++; else if (l.ct != null && claveDia(l.ct) < ini) p.previos++; else p.nuevos++; }
+  return p;
+}
+const subPersonas = p => `De ${fNum(p.total)} persona${p.total === 1 ? '' : 's'} · ${fNum(p.nuevos)} contacto${p.nuevos === 1 ? '' : 's'} nuevo${p.nuevos === 1 ? '' : 's'}`;
+// Nota plegable para cuadrar con HubSpot sin ruido.
+function notaHubSpot(leads, L) {
+  if (!leads.length) return null;
+  const p = personas(leads, L);
+  return h('details', { class: 'aclara' },
+    h('summary', null, '¿Por qué en HubSpot puede salir otro número?'),
+    h('div', { class: 'cuerpo' },
+      h('p', null, 'Aquí se cuentan ', h('b', null, 'leads'), `: cada formulario de Meta que alguien envía. En este periodo hay ${fNum(leads.length)} leads de ${fNum(p.total)} personas`,
+        p.repetidos ? ` (${fNum(p.repetidos)} ${p.repetidos === 1 ? 'es de una persona que envió más de un formulario' : 'son de personas que enviaron más de un formulario'}).` : '.'),
+      h('p', null, `De esas personas, ${fNum(p.nuevos)} son contactos nuevos en HubSpot y ${fNum(p.previos)} ya estaban en la base desde antes`,
+        p.sinContacto ? `; ${fNum(p.sinContacto)} no aparecen en HubSpot` : '',
+        '. Por eso, si en HubSpot se filtran los contactos creados en estas fechas, sale un número menor que el de leads.'),
+      h('p', null, 'Para ver en HubSpot a estas mismas personas, el filtro que cuadra es ', h('b', null, '“Envió el formulario”'), ' con los formularios de Meta, entre las mismas fechas. Al comparar, conviene elegir las fechas con “está entre”: el atajo “Últimos 7 días” de HubSpot no incluye el día de hoy y el del reporte sí.')));
+}
 function numLink(n, href, crit) { return n ? h('a', { class: 'nlink' + (crit ? ' crit' : ''), href }, fNum(n)) : h('span', { class: 'n0' }, '0'); }
 function tile(lbl, val, sub, unidad) {
   return h('div', { class: 'tile' }, h('div', { class: 'n-lbl' }, lbl), h('div', { class: 'n-val' }, val, unidad ? h('small', null, unidad) : null), sub ? h('div', { class: 'n-sub' }, sub) : null);
@@ -719,17 +747,18 @@ addEventListener('scroll', ocultarTip, { passive: true });
 /* ---------- Portada ---------- */
 function vistaInicio() {
   const d = S.data, L = limites();
-  const c = contar(d.leads.filter(l => enRango(l.k, L)));
-  const conBase = d.proveedores.filter(p => p.estado === 'ok').length;
+  const enR = d.leads.filter(l => enRango(l.k, L));
+  const c = contar(enR), pe = personas(enR, L);
   pintar(
     h('p', { class: 'sub intro' },
       'Aquí ves, por proveedor de pauta, cuántos de sus leads ya están en HubSpot como contacto y cuántos tienen su negocio. ' +
       'Cada tarjeta y cada número se pueden abrir: das clic y te lleva a la lista de esos leads.'),
     h('div', { class: 'tiles t4' },
-      tileLink('Leads en las bases', fNum(c.total), `${conBase} de ${d.proveedores.length} proveedores con base conectada`, null, enlace('/leads', { v: 'todos', ir: 'lista' }), { ver: 'Ver todos' }),
+      tileLink('Leads en las bases', fNum(c.total), subPersonas(pe), null, enlace('/leads', { v: 'todos', ir: 'lista' }), { ver: 'Ver todos' }),
       tileLink('Ya están en HubSpot', pct(c.enHs, c.total), `${fNum(c.enHs)} con contacto`, '%', enlace('/leads', { v: 'enhs', ir: 'lista' })),
       tileLink('Con negocio a tiempo', pct(c.completo, c.total), `${fNum(c.completo)} en ≤ ${d.reglas.ventanaNegocioHoras} h`, '%', enlace('/leads', { v: 'completo', ir: 'lista' })),
       tileLink('Por resolver', fNum(c.porResolver), `${fNum(c.sin_negocio)} sin negocio · ${fNum(c.sin_contacto)} sin contacto`, null, enlace('/leads', { v: 'resolver', ir: 'lista' }), { tono: c.porResolver ? 'alerta' : '', ver: c.porResolver ? 'Ver los pendientes' : 'Ver leads' })),
+    notaHubSpot(enR, L),
     tarjetaConciliacion(L),
     h('div', { class: 'sec-row' }, h('h2', null, 'Por proveedor'), h('a', { class: 'btn go sm', href: enlace('/leads') }, 'Ver todos los leads juntos', flecha())),
     h('div', { class: 'grid-prov' }, d.proveedores.map((p, i) => tarjetaProveedor(p, i, L))),
@@ -806,11 +835,11 @@ function filtrosActivos() {
   if (g != null && g !== '') chips.push(h('span', { class: 'fchip' }, 'Programa: ', h('b', null, nombrePrograma(Number(g))), h('a', { href: aqui({ g: null }), 'aria-label': 'Quitar el filtro de programa' }, cruz())));
   return chips.length ? h('div', { class: 'activos' }, chips) : null;
 }
-function tilesDetalle(c) {
+function tilesDetalle(c, leads, L) {
   const vista = vistaActual(), r = S.data.reglas;
   const t = (k, lbl, val, sub, unidad, tono) => tileLink(lbl, val, sub, unidad, aqui({ v: k, ir: 'lista' }), { act: vista === k, tono });
   return h('div', { class: 'tiles' },
-    t('todos', 'Leads', fNum(c.total), 'En el periodo y filtros elegidos'),
+    t('todos', 'Leads', fNum(c.total), subPersonas(personas(leads, L))),
     t('enhs', 'Ya están en HubSpot', pct(c.enHs, c.total), `${fNum(c.enHs)} de ${fNum(c.total)} con contacto`, '%'),
     t('completo', 'Negocio a tiempo', pct(c.completo, c.total), `${fNum(c.completo)} en ≤ ${r.ventanaNegocioHoras} h · ${fNum(c.tardio)} tardíos`, '%'),
     t('resolver', 'Por resolver', fNum(c.porResolver), `${fNum(c.sin_negocio)} sin negocio · ${fNum(c.sin_contacto)} sin contacto`, null, c.porResolver ? 'alerta' : ''),
@@ -838,7 +867,8 @@ function vistaProveedor(i) {
       h('div', { class: 'meta-line' }, fuente ? h('span', null, 'Base: ', h('b', null, fuente)) : null, h('span', null, 'Leads en la base: ', h('b', null, fNum(base.length))), base.length ? h('span', null, 'Del ', h('b', null, fDia(base[0].t)), ' al ', h('b', null, fDia(base[base.length - 1].t))) : null)),
     h('div', { class: 'filters' }, selectorPrograma(enR), selectorAgrupar(agr)),
     filtrosActivos(),
-    tilesDetalle(c),
+    tilesDetalle(c, leads, L),
+    notaHubSpot(leads, L),
     tarjetaGrafica(leads, agr, L),
     tarjetaProgramas(enR),
     tarjetaLista(leads, false));
@@ -859,7 +889,8 @@ function vistaLeads() {
       h('p', { class: 'sub', style: 'max-width:72ch;font-size:14px' }, 'Los leads de todos los proveedores juntos. Para acotar, eliges proveedor o programa; cada número abre la lista de esos leads.')),
     h('div', { class: 'filters' }, selectorProveedor(enR), selectorPrograma(delProv), selectorAgrupar(agr)),
     filtrosActivos(),
-    tilesDetalle(contar(leads)),
+    tilesDetalle(contar(leads), leads, L),
+    notaHubSpot(leads, L),
     tarjetaPorProveedor(g === '' ? enR : enR.filter(l => String(l.g) === g)),
     tarjetaGrafica(leads, agr, L),
     tarjetaProgramas(delProv),
